@@ -7,7 +7,7 @@
         "space-before-function-paren": "off",
         "no-throw-literal": "off",
         "camelcase": ["error", { "properties": "always" }],
-        "no-console": "error",
+        "no-console": "off",
         "no-alert": "error",
         "no-debugger": "error",
         "prefer-arrow-callback": "error",

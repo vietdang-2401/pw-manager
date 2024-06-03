@@ -71,7 +71,7 @@ async function browserExtensionConnectorStart(e, config) {
         socket.on('data', (data) => onSocketData(socket, data));
         socket.on('close', () => onSocketClose(socket));
     });
-    server.listen(serverSocketName);
+    // server.listen(serverSocketName);
 
     logger.info('Started');
 }

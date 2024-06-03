@@ -7,8 +7,6 @@ import { GroupsMenuModel } from 'models/menu/groups-menu-model';
 import { MenuSectionModel } from 'models/menu/menu-section-model';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { Launcher } from 'comp/launcher';
-import { Features } from 'util/features';
 
 class MenuModel extends Model {
     constructor() {
@@ -114,38 +112,10 @@ class MenuModel extends Model {
         this.shortcutsSection = new MenuSectionModel([
             { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
         ]);
-        if (Features.supportsBrowserExtensions) {
-            this.browserSection = new MenuSectionModel([
-                { locTitle: 'menuSetBrowser', icon: Features.browserIcon, page: 'browser' }
-            ]);
-        }
-        this.pluginsSection = new MenuSectionModel([
-            { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
-        ]);
-        if (Launcher) {
-            this.devicesSection = new MenuSectionModel([
-                { locTitle: 'menuSetDevices', icon: 'usb', page: 'devices' }
-            ]);
-        }
-        this.aboutSection = new MenuSectionModel([
-            { locTitle: 'menuSetAbout', icon: 'info', page: 'about' }
-        ]);
-        this.helpSection = new MenuSectionModel([
-            { locTitle: 'help', icon: 'question', page: 'help' }
-        ]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection(
-            [
-                this.generalSection,
-                this.shortcutsSection,
-                this.browserSection,
-                this.pluginsSection,
-                this.devicesSection,
-                this.aboutSection,
-                this.helpSection,
-                this.filesSection
-            ].filter((s) => s)
+            [this.generalSection, this.shortcutsSection, this.filesSection].filter((s) => s)
         );
         this.sections = this.menus.app;
 
