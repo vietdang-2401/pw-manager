@@ -1,12 +1,12 @@
 import { Launcher } from 'comp/launcher';
 import { StorageCache } from 'storage/impl/storage-cache';
-import { StorageDropbox } from 'storage/impl/storage-dropbox';
+// import { StorageDropbox } from 'storage/impl/storage-dropbox';
 import { StorageFile } from 'storage/impl/storage-file';
 import { StorageFileCache } from 'storage/impl/storage-file-cache';
 import { StorageGDrive } from 'storage/impl/storage-gdrive';
-import { StorageOneDrive } from 'storage/impl/storage-onedrive';
-import { StorageTeams } from 'storage/impl/storage-teams';
-import { StorageWebDav } from 'storage/impl/storage-webdav';
+// import { StorageOneDrive } from 'storage/impl/storage-onedrive';
+// import { StorageTeams } from 'storage/impl/storage-teams';
+// import { StorageWebDav } from 'storage/impl/storage-webdav';
 import { createOAuthSession } from 'storage/pkce';
 
 const BuiltInStorage = {
@@ -15,11 +15,11 @@ const BuiltInStorage = {
 };
 
 const ThirdPartyStorage = {
-    dropbox: new StorageDropbox(),
-    gdrive: new StorageGDrive(),
-    onedrive: new StorageOneDrive(),
-    msteams: new StorageTeams(),
-    webdav: new StorageWebDav()
+    // dropbox: new StorageDropbox(),
+    gdrive: new StorageGDrive()
+    // onedrive: new StorageOneDrive(),
+    // msteams: new StorageTeams(),
+    // webdav: new StorageWebDav()
 };
 
 const Storage = BuiltInStorage;

@@ -9,7 +9,6 @@
             {{#each locales as |name key|}}
                 <option value="{{key}}" {{#ifeq key ../activeLocale}}selected{{/ifeq}}>{{name}}</option>
             {{/each}}
-            <option value="...">({{res 'setGenLocOther'}})</option>
         </select>
     </div>
     {{/if}}
@@ -59,14 +58,6 @@
                 60{{/res}}</option>
         </select>
     </div>
-    <div>
-        <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}:</label>
-        <select class="settings__general-remember-key-files settings__select input-base" id="settings__general-remember-key-files">
-            <option value="" {{#unless rememberKeyFiles}}selected{{/unless}}>{{res 'setGenNoRememberKeyFiles'}}</option>
-            <option value="data" {{#ifeq rememberKeyFiles 'data'}}selected{{/ifeq}}>{{res 'setGenRememberKeyFilesData'}}</option>
-            {{#if supportFiles}}<option value="path" {{#ifeq rememberKeyFiles 'path'}}selected{{/ifeq}}>{{res 'setGenRememberKeyFilesPath'}}</option>{{/if}}
-        </select>
-    </div>
     {{#if canClearClipboard}}
     <div>
         <label for="settings__general-clipboard">{{res 'setGenClearClip'}}:</label>
@@ -91,7 +82,7 @@
         <label for="settings__general-minimize-on-field-copy">{{res 'setGenMinOnFieldCopy'}}</label>
     </div>
     {{/if}}
-    {{#if canAutoType}}
+    {{!-- {{#if canAutoType}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-direct-autotype"
             id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
@@ -107,43 +98,16 @@
                id="settings__general-field-label-dblclick-autotype" {{#if fieldLabelDblClickAutoType}}checked{{/if}} />
         <label for="settings__general-field-label-dblclick-autotype">{{res 'setGenFieldLabelDblClickAutoType'}}</label>
     </div>
-    {{/if}}
-    <div>
+    {{/if}} --}}
+    {{!-- <div>
         <input type="checkbox" class="settings__input input-base settings__general-use-markdown" id="settings__general-use-markdown" {{#if useMarkdown}}checked{{/if}} />
         <label for="settings__general-use-markdown">{{res 'setGenUseMarkdown'}}</label>
-    </div>
+    </div> --}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-use-group-icon-for-entries"
                id="settings__general-use-group-icon-for-entries" {{#if useGroupIconForEntries}}checked{{/if}} />
         <label for="settings__general-use-group-icon-for-entries">{{res 'setGenUseGroupIconForEntries'}}</label>
     </div>
-    {{#if hasDeviceOwnerAuth}}
-        <div>
-            <label for="settings__general-device-owner-auth">{{res 'setGenTouchId'}}:</label>
-            <select class="settings__general-device-owner-auth settings__select input-base" id="settings__general-device-owner-auth">
-                <option value="" {{#unless deviceOwnerAuth}}selected{{/unless}}>{{res 'setGenTouchIdDisabled'}}</option>
-                <option value="memory" {{#ifeq deviceOwnerAuth 'memory'}}selected{{/ifeq}}>{{res 'setGenTouchIdMemory'}}</option>
-                <option value="file" {{#ifeq deviceOwnerAuth 'file'}}selected{{/ifeq}}>{{res 'setGenTouchIdFile'}}</option>
-            </select>
-        </div>
-        {{#if deviceOwnerAuth}}
-            <label for="settings__general-device-owner-auth-timeout">{{res 'setGenTouchIdPass'}}:</label>
-            <select class="settings__general-device-owner-auth-timeout settings__select input-base" id="settings__general-device-owner-auth-timeout">
-                <option value="1" {{#ifeq deviceOwnerAuthTimeout 1}}selected{{/ifeq}}>{{Res 'oneMinute'}}</option>
-                <option value="5" {{#ifeq deviceOwnerAuthTimeout 5}}selected{{/ifeq}}>{{#Res 'minutes'}}5{{/Res}}</option>
-                <option value="30" {{#ifeq deviceOwnerAuthTimeout 30}}selected{{/ifeq}}>{{#Res 'minutes'}}30{{/Res}}</option>
-                <option value="60" {{#ifeq deviceOwnerAuthTimeout 60}}selected{{/ifeq}}>{{Res 'oneHour'}}</option>
-                <option value="120" {{#ifeq deviceOwnerAuthTimeout 120}}selected{{/ifeq}}>{{#Res 'hours'}}2{{/Res}}</option>
-                <option value="480" {{#ifeq deviceOwnerAuthTimeout 480}}selected{{/ifeq}}>{{#Res 'hours'}}8{{/Res}}</option>
-                <option value="1440" {{#ifeq deviceOwnerAuthTimeout 1440}}selected{{/ifeq}}>{{Res 'oneDay'}}</option>
-                <option value="10080" {{#ifeq deviceOwnerAuthTimeout 10080}}selected{{/ifeq}}>{{Res 'oneWeek'}}</option>
-                {{#ifeq deviceOwnerAuth 'file'}}
-                    <option value="43200" {{#ifeq deviceOwnerAuthTimeout 43200}}selected{{/ifeq}}>{{Res 'oneMonth'}}</option>
-                    <option value="525600" {{#ifeq deviceOwnerAuthTimeout 525600}}selected{{/ifeq}}>{{Res 'oneYear'}}</option>
-                {{/ifeq}}
-            </select>
-        {{/if}}
-    {{/if}}
 
     <h2 id="audit">{{res 'setGenAudit'}}</h2>
     <div>
@@ -156,28 +120,6 @@
         <input type="checkbox" class="settings__input input-base settings__general-audit-password-entropy"
                id="settings__general-audit-password-entropy" {{#if auditPasswordEntropy}}checked{{/if}} />
         <label for="settings__general-audit-password-entropy">{{res 'setGenAuditPasswordEntropy'}}</label>
-    </div>
-
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-exclude-pins-from-audit"
-               id="settings__general-exclude-pins-from-audit" {{#if excludePinsFromAudit}}checked{{/if}} />
-        <label for="settings__general-exclude-pins-from-audit">{{res 'setGenExcludePinsFromAudit'}}</label>
-    </div>
-
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-check-passwords-on-hibp"
-               id="settings__general-check-passwords-on-hibp" {{#if checkPasswordsOnHIBP}}checked{{/if}} />
-        <label for="settings__general-check-passwords-on-hibp">
-            {{~#res 'setGenCheckPasswordsOnHIBP'~}}
-                <a href="{{hibpLink}}" rel="noreferrer noopener" target="_blank">Have I Been Pwned</a>
-            {{~/res~}}
-        </label>
-        <i class="fa fa-info-circle info-btn settings__general-toggle-help-hibp"></i>
-        <div class="settings__general-help-hibp hide">
-            {{~#res 'setGenHelpHIBP'~}}
-                <a href="{{hibpPrivacyLink}}" rel="noreferrer noopener" target="_blank">{{res 'setGenHelpHIBPLink'}}</a>
-            {{~/res~}}
-        </div>
     </div>
 
     <div>
@@ -251,6 +193,15 @@
                {{#if shortLivedStorageToken}}checked{{/if}} />
         <label for="settings__general-short-lived-storage-token">{{res 'setGenShortLivedStorageToken'}}</label>
     </div>
+
+    {{#each storageProviders as |prv|}}
+    <h4 class="settings__general-storage-header"><input type="checkbox" id="settings__general-prv-check-{{prv.name}}"
+            class="settings__general-prv-check" data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}} /><label
+            for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
+    <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
+    {{#if prv.loggedIn}}<button class="btn-silent settings__general-prv-logout" data-storage="{{prv.name}}">{{res
+        'setGenStorageLogout'}}</button>{{/if}}
+    {{/each}}
 
     <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>

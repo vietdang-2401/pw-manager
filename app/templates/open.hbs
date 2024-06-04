@@ -6,9 +6,9 @@
             <i class="fa fa-times-circle open__message-cancel-btn-icon"></i>
         </div>
     </div>
-    <div class="open__icons">
+    <div class="open__icons {{#if showMethodOpenFile}}hide{{/if}}">
         <div>
-            <div class="open__icon open__icon-open" tabindex="1" id="open__icon-open">
+            <div class="open__icon open__icon-showOpenMethod" tabindex="1" id="open__icon-showOpenMethod">
                 <i class="fa fa-lock open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openOpen'}}</div>
             </div>
@@ -28,11 +28,15 @@
             </div>
         </div>
     </div>
-    <div class="open__methods hide">
+    <div class="open__methods {{#unless showMethodOpenFile}}hide{{/unless}}">
+        <div class="open__back-button">
+            <i class="fa fa-chevron-left settings__back-button-pre"></i>{{res 'return'}} <i
+                class="fa fa-arrow-circle-left settings__back-button-post"></i>
+        </div>
         <div class="open__icons">
             <div class="open__icon open__icon-open" tabindex="1" id="open__icon-open">
-                <i class="fa fa-lock open__icon-i"></i>
-                <div class="open__icon-text">{{res 'openOpen'}}</div>
+                <i class="fa fa-desktop open__icon-i"></i>
+                <div class="open__icon-text">{{res 'openLocalFile'}}</div>
             </div>
             {{#each storageProviders as |prv|}}
                 <div class="open__icon open__icon-storage" data-storage="{{prv.name}}" tabindex="{{add @index 6}}"
@@ -47,33 +51,45 @@
             </div>
         </div>
         <div class="open__pass-area">
-        <div class="hide">
-            {{!-- we need these inputs to screw browsers passwords autocompletion --}}
-            <input type="text" name="username">
-            <input type="password" name="password">
-        </div>
-        <div class="open__pass-warn-wrap">
-            <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> {{res 'openCaps'}}</div>
-        </div>
-        <div class="open__pass-field-wrap">
-            <input class="open__pass-input" name="password" type="password" size="30" autocomplete="new-password" maxlength="1024"
-                   placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="23" />
-            <div class="open__pass-enter-btn" tabindex="24">
-                <i class="fa fa-level-down-alt rotate-90 open__pass-enter-btn-icon-enter"></i>
-                <i class="fa fa-fingerprint open__pass-enter-btn-icon-touch-id"></i>
+            <div class="hide">
+                {{!-- we need these inputs to screw browsers passwords autocompletion --}}
+                <input type="text" name="username">
+                <input type="password" name="password">
             </div>
-            <div class="open__pass-opening-icon"><i class="fa fa-spinner spin"></i></div>
-        </div>
-        <div class="open__last">
-            {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 30}}"
-                     id="open__last-item--{{file.id}}">
-                    {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
-                    <span class="open__last-item-text">{{file.name}}</span>
-                    {{#if ../canRemoveLatest}}<i class="fa fa-times open__last-item-icon-del"></i>{{/if}}
+            <div class="open__pass-warn-wrap">
+                <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> {{res 'openCaps'}}</div>
+            </div>
+            <div class="open__pass-field-wrap">
+                <input class="open__pass-input" name="password" type="password" size="30" autocomplete="new-password" maxlength="1024"
+                    placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="23" />
+                <div class="open__pass-enter-btn" tabindex="24">
+                    <i class="fa fa-level-down-alt rotate-90 open__pass-enter-btn-icon-enter"></i>
+                    <i class="fa fa-fingerprint open__pass-enter-btn-icon-touch-id"></i>
                 </div>
-            {{/each}}
+                <div class="open__pass-opening-icon"><i class="fa fa-spinner spin"></i></div>
+            </div>
+
+            <div class="open__settings">
+                <div class="open__settings-key-file hide" tabindex="25">
+                    <i class="fa fa-key open__settings-key-file-icon">
+                    </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
+                </div>
+            </div>
+
+            <div class="open__last">
+                {{#each lastOpenFiles as |file|}}
+                    <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 30}}"
+                        id="open__last-item--{{file.id}}">
+                        {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
+                        <span class="open__last-item-text">{{file.name}}</span>
+                        {{#if ../canRemoveLatest}}<i class="fa fa-times open__last-item-icon-del"></i>{{/if}}
+                    </div>
+                {{/each}}
+            </div>
         </div>
     </div>
+    <div class="open__dropzone">
+        <i class="fa fa-lock muted-color open__dropzone-icon"></i>
+        <h1 class="muted-color open__dropzone-header">{{res 'openDropHere'}}</h1>
     </div>
 </div>

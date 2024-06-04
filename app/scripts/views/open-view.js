@@ -35,6 +35,8 @@ class OpenView extends View {
 
     events = {
         'change .open__file-ctrl': 'fileSelected',
+        'click .open__icon-showOpenMethod': 'toggleShowOpenMethod',
+        'click .open__back-button': 'toggleShowOpenMethod',
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-demo': 'createDemo',
@@ -63,6 +65,7 @@ class OpenView extends View {
     busy = false;
     currentSelectedIndex = -1;
     encryptedPassword = null;
+    showMethodOpenFile = false;
 
     constructor(model) {
         super(model);
@@ -115,9 +118,9 @@ class OpenView extends View {
             !this.model.files.get('yubikey');
         const canUseChalRespYubiKey = hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
 
+        const showMethodOpenFile = this.showMethodOpenFile;
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
-            canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.demoOpened,
             storageProviders,
             unlockMessageRes: this.model.unlockMessageRes,
@@ -130,7 +133,8 @@ class OpenView extends View {
             canOpenYubiKey,
             canUseChalRespYubiKey,
             showMore,
-            showLogo
+            showLogo,
+            showMethodOpenFile
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
@@ -376,6 +380,15 @@ class OpenView extends View {
         });
     }
 
+    toggleShowOpenMethod(show = false) {
+        if (show === true) {
+            this.showMethodOpenFile = show;
+        } else {
+            this.showMethodOpenFile = !this.showMethodOpenFile;
+        }
+        this.render();
+    }
+
     openFile() {
         if (this.model.settings.canOpen === false) {
             return;
@@ -510,6 +523,7 @@ class OpenView extends View {
     }
 
     dragover(e) {
+        console.log('drag over');
         if (this.model.settings.canOpen === false) {
             return;
         }
@@ -533,6 +547,7 @@ class OpenView extends View {
     }
 
     dragleave() {
+        console.log('drag leave');
         if (this.model.settings.canOpen === false) {
             return;
         }
@@ -545,6 +560,7 @@ class OpenView extends View {
     }
 
     drop(e) {
+        console.log('drop');
         if (this.model.settings.canOpen === false) {
             return;
         }
@@ -555,6 +571,7 @@ class OpenView extends View {
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+        this.toggleShowOpenMethod(true);
         this.closeConfig();
         this.$el.removeClass('open--drag');
         const files = [...(e.target.files || e.dataTransfer.files)];
@@ -775,20 +792,21 @@ class OpenView extends View {
     }
 
     openStorage(e) {
-        if (this.busy) {
-            return;
-        }
-        const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
-        if (!storage) {
-            return;
-        }
-        if (storage.needShowOpenConfig && storage.needShowOpenConfig()) {
-            this.showConfig(storage);
-        } else if (storage.list) {
-            this.listStorage(storage);
-        } else {
-            Alerts.notImplemented();
-        }
+        console.log('gg drive');
+        // if (this.busy) {
+        //     return;
+        // }
+        // const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
+        // if (!storage) {
+        //     return;
+        // }
+        // if (storage.needShowOpenConfig && storage.needShowOpenConfig()) {
+        //     this.showConfig(storage);
+        // } else if (storage.list) {
+        //     this.listStorage(storage);
+        // } else {
+        //     Alerts.notImplemented();
+        // }
     }
 
     listStorage(storage, config) {

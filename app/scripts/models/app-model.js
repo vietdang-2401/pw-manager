@@ -12,9 +12,7 @@ import { EntryModel } from 'models/entry-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { FileModel } from 'models/file-model';
 import { GroupModel } from 'models/group-model';
-import { YubiKeyOtpModel } from 'models/otp-device/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
-import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
 import { DateFormat } from 'comp/i18n/date-format';
 import { Launcher } from 'comp/launcher';
@@ -145,14 +143,6 @@ class AppModel {
                 )
                 .reverse()
                 .forEach((fi) => this.fileInfos.unshift(fi));
-        }
-        if (config.plugins) {
-            const pluginsPromises = config.plugins.map((plugin) =>
-                PluginManager.installIfNew(plugin.url, plugin.manifest, true)
-            );
-            return Promise.all(pluginsPromises).then(() => {
-                this.settings.set(config.settings);
-            });
         }
         if (config.advancedSearch) {
             this.advancedSearch = config.advancedSearch;
@@ -1332,19 +1322,6 @@ class AppModel {
         this.openOtpDevice((err) => {
             this.appLogger.debug('YubiKey auto-open complete', err);
         });
-    }
-
-    openOtpDevice(callback) {
-        this.openingOtpDevice = true;
-        const device = new YubiKeyOtpModel();
-        device.open((err) => {
-            this.openingOtpDevice = false;
-            if (!err) {
-                this.addFile(device);
-            }
-            callback(err);
-        });
-        return device;
     }
 
     getMatchingOtpEntry(entry) {

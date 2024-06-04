@@ -15,8 +15,7 @@ const SettingsManager = {
 
     allLocales: {
         'en-US': 'English',
-        'de-DE': 'Deutsch',
-        'fr-FR': 'Français'
+        'vi-VN': 'Việt Nam'
     },
 
     allThemes: {
@@ -88,7 +87,7 @@ const SettingsManager = {
     },
 
     getDefaultTheme() {
-        return 'dark';
+        return 'lt';
     },
 
     setTheme(theme) {

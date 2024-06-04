@@ -15,7 +15,6 @@ import { Features } from 'util/features';
 import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
-import { SettingsPrvView } from 'views/settings/settings-prv-view';
 import { mapObject, minmax } from 'util/fn';
 import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import { NativeModules } from 'comp/launcher/native-modules';
@@ -150,22 +149,6 @@ class SettingsGeneralView extends View {
             disableOfflineStorage: AppSettingsModel.disableOfflineStorage,
             shortLivedStorageToken: AppSettingsModel.shortLivedStorageToken
         });
-        this.renderProviderViews(storageProviders);
-    }
-
-    renderProviderViews(storageProviders) {
-        storageProviders.forEach(function (prv) {
-            if (this.views[prv.name]) {
-                this.views[prv.name].remove();
-            }
-            if (prv.hasConfig) {
-                const prvView = new SettingsPrvView(prv, {
-                    parent: this.$el.find('.settings__general-' + prv.name)[0]
-                });
-                this.views[prv.name] = prvView;
-                prvView.render();
-            }
-        }, this);
     }
 
     getUpdateInfo() {
@@ -227,6 +210,7 @@ class SettingsGeneralView extends View {
                 storageProviders.push(prv);
             }
         });
+        console.log(storageProviders);
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         return storageProviders.map((sp) => ({
             name: sp.name,

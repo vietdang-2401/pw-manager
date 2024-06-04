@@ -8,10 +8,6 @@
     <div><span class="shortcut">{{cmd}}C</span> {{res 'setShCopyPass'}}</div>
     <div><span class="shortcut">{{cmd}}B</span> {{res 'setShCopyUser'}}</div>
     <div><span class="shortcut">{{cmd}}U</span> {{res 'setShCopyUrl'}}</div>
-    <div><span class="shortcut">{{alt}}2</span> {{res 'setShCopyOtp'}}</div>
-    {{#if autoTypeSupported}}
-        <div><span class="shortcut">{{cmd}}T</span> {{res 'setShAutoType'}}</div>
-    {{/if}}
     <div><span class="shortcut">&uarr;</span> {{res 'setShPrev'}}</div>
     <div><span class="shortcut">&darr;</span> {{res 'setShNext'}}</div>
     <div><span class="shortcut">{{alt}}N</span> {{res 'setShCreateEntry'}}</div>
@@ -20,7 +16,7 @@
     <div><span class="shortcut">{{cmd}}G</span> {{res 'setShGen'}}</div>
     <div><span class="shortcut">{{cmd}},</span> {{res 'setShSet'}}</div>
     <div><span class="shortcut">{{cmd}}L</span> {{res 'setShLock'}}</div>
-    {{#if globalShortcuts}}
+    {{!-- {{#if globalShortcuts}}
         <p>{{res 'setShGlobal'}}</p>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
                      data-shortcut="autoType">{{globalShortcuts.autoType}}</button> {{res 'setShAutoTypeGlobal'}}</div>
@@ -30,9 +26,5 @@
                      data-shortcut="copyUser">{{globalShortcuts.copyUser}}</button> {{res 'setShCopyUser'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
                      data-shortcut="copyUrl">{{globalShortcuts.copyUrl}}</button> {{res 'setShCopyUrl'}}</div>
-        <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="copyOtp">{{globalShortcuts.copyOtp}}</button> {{res 'setShCopyOtp'}}</div>
-        <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="restoreApp">{{globalShortcuts.restoreApp}}</button> {{#res 'setShRestoreApp'}}KeeWeb{{/res}}</div>
-    {{/if}}
+    {{/if}} --}}
 </div>
