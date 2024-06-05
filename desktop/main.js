@@ -500,6 +500,14 @@ function emitRemoteEvent(e, arg) {
     }
 }
 
+function captureScreen() {
+    console.log('capture');
+    // electron.desktopCapturer.getSources({
+    //     types: ['screen'],
+    //     thumbnailSize: { width: 1366, height: 768 }
+    // });
+}
+
 function setMenu() {
     if (process.platform === 'darwin') {
         const name = require('electron').app.name;
@@ -607,7 +615,8 @@ function setGlobalShortcuts(appSettings) {
         CopyUser: { shortcut: defaultShortcutModifiers + 'B', event: 'copy-user' },
         CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
         CopyOtp: { event: 'copy-otp' },
-        RestoreApp: { action: restoreMainWindow }
+        RestoreApp: { action: restoreMainWindow },
+        CaptureScreen: { shortcut: 'Alt+Shift+Q', event: 'capture-screen', action: captureScreen }
     };
     electron.globalShortcut.unregisterAll();
     for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {

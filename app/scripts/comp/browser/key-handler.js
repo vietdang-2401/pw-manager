@@ -28,6 +28,7 @@ class KeyHandler {
     }
 
     onKey(key, handler, thisArg, shortcut, modal, noPrevent) {
+        console.log('onkey');
         let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
             this.shortcuts[key] = keyShortcuts = [];
@@ -57,6 +58,7 @@ class KeyHandler {
         IdleTracker.regUserAction();
         const code = e.keyCode || e.which;
         const keyShortcuts = this.shortcuts[code];
+        console.log(keyShortcuts);
         if (keyShortcuts && keyShortcuts.length) {
             for (const sh of keyShortcuts) {
                 if (FocusManager.modal && sh.modal !== FocusManager.modal && sh.modal !== '*') {

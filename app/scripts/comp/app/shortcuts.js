@@ -92,6 +92,7 @@ const Shortcuts = {
     },
     globalShortcut(type) {
         const appSettingsShortcut = AppSettingsModel[this.globalShortcutAppSettingsKey(type)];
+        console.log(appSettingsShortcut);
         if (appSettingsShortcut) {
             return appSettingsShortcut;
         }
