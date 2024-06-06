@@ -6,9 +6,11 @@ if (process.send && process.argv.includes('--native-module-host')) {
 }
 
 const electron = require('electron');
+const { screen } = require('electron/main');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
+const robot = require('@jitsi/robotjs');
 
 const { locale, setLocale, getLocaleValues } = require('./scripts/locale');
 const { Logger } = require('./scripts/logger');
@@ -501,11 +503,25 @@ function emitRemoteEvent(e, arg) {
 }
 
 function captureScreen() {
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width, height } = primaryDisplay.bounds;
     console.log('capture');
-    // electron.desktopCapturer.getSources({
-    //     types: ['screen'],
-    //     thumbnailSize: { width: 1366, height: 768 }
-    // });
+    electron.desktopCapturer
+        .getSources({
+            types: ['screen', 'window'],
+            thumbnailSize: {
+                height,
+                width
+            }
+        })
+        .then((source) => {
+            const thumbnailBuffer = source[0].thumbnail.toPNG();
+            fs.writeFileSync('img.png', thumbnailBuffer);
+            console.log('write image complete');
+            robot.moveMouse(1240, 200);
+            robot.doubleMouseClick();
+            emitRemoteEvent('auto-type');
+        });
 }
 
 function setMenu() {
