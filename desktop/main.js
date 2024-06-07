@@ -8,6 +8,7 @@ if (process.send && process.argv.includes('--native-module-host')) {
 const electron = require('electron');
 const { screen } = require('electron/main');
 const path = require('path');
+const axios = require('axios');
 const fs = require('fs');
 const url = require('url');
 const robot = require('@jitsi/robotjs');
@@ -514,13 +515,43 @@ function captureScreen() {
                 width
             }
         })
-        .then((source) => {
+        .then(async (source) => {
             const thumbnailBuffer = source[0].thumbnail.toPNG();
             fs.writeFileSync('img.png', thumbnailBuffer);
             console.log('write image complete');
-            robot.moveMouse(1240, 200);
-            robot.doubleMouseClick();
+
+            const { posX, posY } = await detectInputPosition(thumbnailBuffer.toString('base64'));
+
+            robot.moveMouse(posX, posY);
+            robot.mouseClick();
+            robot.mouseClick('left', true);
+            robot.keyTap('backspace');
             emitRemoteEvent('auto-type');
+        });
+}
+
+function detectInputPosition(image) {
+    return axios({
+        method: 'POST',
+        url: 'http://localhost:9001/logins/2',
+        params: {
+            api_key: 'YZInjnBeAFvFJdyRQW9v',
+            confidence: 60
+        },
+        data: image,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+        .then((response) => {
+            console.log(response.data);
+            const userNameInfo = response.data.predictions.find(
+                (predict) => predict.class === 'username'
+            );
+            return { posX: userNameInfo.x, posY: userNameInfo.y };
+        })
+        .catch((error) => {
+            console.log(error.message);
         });
 }
 
@@ -632,7 +663,7 @@ function setGlobalShortcuts(appSettings) {
         CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
         CopyOtp: { event: 'copy-otp' },
         RestoreApp: { action: restoreMainWindow },
-        CaptureScreen: { shortcut: 'Alt+Shift+Q', event: 'capture-screen', action: captureScreen }
+        CaptureScreen: { shortcut: 'Ctrl+Alt+L', event: 'capture-screen', action: captureScreen }
     };
     electron.globalShortcut.unregisterAll();
     for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {

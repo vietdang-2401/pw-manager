@@ -82,12 +82,15 @@ const AutoType = {
     run(result, windowId, callback) {
         this.running = true;
         const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
+        // TODO: add waiting time when click enter
         const context = result.context;
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {
             const parser = new AutoTypeParser(sequence);
+            console.log(parser);
             const runner = parser.parse();
+            console.log(runner);
             logger.debug('Parsed', this.printOps(runner.ops));
             runner.resolve(result.entry, context, (err) => {
                 if (err) {
@@ -166,6 +169,7 @@ const AutoType = {
         logger.debug('Getting window info');
         const helper = new AutoTypeHelper();
         return helper.getActiveWindowInfo((err, windowInfo) => {
+            console.log(windowInfo);
             if (err) {
                 logger.error('Error getting window info', err);
             } else {
@@ -240,9 +244,9 @@ const AutoType = {
     },
 
     focusMainWindow() {
-        if (!Launcher.isAppFocused()) {
-            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
-        }
+        // if (!Launcher.isAppFocused()) {
+        setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        // }
     },
 
     processEventWithFilter(evt) {

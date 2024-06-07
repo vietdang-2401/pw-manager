@@ -28,7 +28,6 @@ class KeyHandler {
     }
 
     onKey(key, handler, thisArg, shortcut, modal, noPrevent) {
-        console.log('onkey');
         let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
             this.shortcuts[key] = keyShortcuts = [];
