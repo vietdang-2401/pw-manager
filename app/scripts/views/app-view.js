@@ -6,7 +6,6 @@ import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
-import { UpdateModel } from 'models/update-model';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
@@ -98,8 +97,6 @@ class AppView extends View {
         this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
         this.listenTo(Events, 'launcher-before-quit', this.launcherBeforeQuit);
 
-        this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
-
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
         window.onblur = this.windowBlur.bind(this);
@@ -187,12 +184,6 @@ class AppView extends View {
         if (file && file.data && /\.kdbx$/i.test(file.data)) {
             this.showOpenFile();
             this.views.open.showOpenLocalFile(file.data, file.key);
-        }
-    }
-
-    updateApp() {
-        if (UpdateModel.updateStatus === 'ready' && !Launcher && !this.model.files.hasOpenFiles()) {
-            window.location.reload();
         }
     }
 

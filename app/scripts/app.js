@@ -4,9 +4,6 @@ import { FileInfoCollection } from 'collections/file-info-collection';
 import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
-import { Updater } from 'comp/app/updater';
-import { UsbListener } from 'comp/app/usb-listener';
-import { BrowserExtensionConnector } from 'comp/extension/browser-extension-connector';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
@@ -20,8 +17,6 @@ import { Timeouts } from 'const/timeouts';
 import { AppModel } from 'models/app-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { RuntimeDataModel } from 'models/runtime-data-model';
-import { UpdateModel } from 'models/update-model';
-import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
 import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
@@ -46,7 +41,6 @@ ready(() => {
         .then(loadRemoteConfig)
         .then(ensureCanRun)
         .then(initStorage)
-        .then(initUsbListener)
         .then(showApp)
         .then(postInit)
         .catch((e) => {
@@ -80,7 +74,6 @@ ready(() => {
     function loadConfigs() {
         return Promise.all([
             AppSettingsModel.load(),
-            UpdateModel.load(),
             RuntimeDataModel.load(),
             FileInfoCollection.load()
         ]).then(() => {
@@ -97,9 +90,7 @@ ready(() => {
         ThemeWatcher.init();
         SettingsManager.init();
         window.kw = ExportApi;
-        return PluginManager.init().then(() => {
-            StartProfiler.milestone('initializing modules');
-        });
+        StartProfiler.milestone('initializing modules');
     }
 
     function showSettingsLoadError() {
@@ -144,11 +135,6 @@ ready(() => {
         StartProfiler.milestone('initializing storage');
     }
 
-    function initUsbListener() {
-        UsbListener.init();
-        StartProfiler.milestone('starting usb');
-    }
-
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
@@ -180,12 +166,9 @@ ready(() => {
 
     function postInit() {
         setTimeout(() => {
-            Updater.init();
             SingleInstanceChecker.init();
             AppRightsChecker.init();
             IdleTracker.init();
-            BrowserExtensionConnector.init(appModel);
-            PluginManager.runAutoUpdate();
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }
 

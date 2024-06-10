@@ -202,9 +202,6 @@ const Launcher = {
     canDetectOsSleep() {
         return process.platform !== 'linux';
     },
-    updaterEnabled() {
-        return process.platform !== 'linux';
-    },
     getMainWindow() {
         return this.remoteApp().getMainWindow();
     },

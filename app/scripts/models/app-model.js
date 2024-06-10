@@ -4,7 +4,6 @@ import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { RuntimeInfo } from 'const/runtime-info';
-import { UsbListener } from 'comp/app/usb-listener';
 import { NativeModules } from 'comp/launcher/native-modules';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -35,7 +34,6 @@ class AppModel {
     activeEntryId = null;
     isBeta = RuntimeInfo.beta;
     advancedSearch = null;
-    attachedYubiKeysCount = 0;
     memoryPasswordStorage = {};
     fileUnlockPromise = null;
     hardwareDecryptInProgress = false;
@@ -49,7 +47,6 @@ class AppModel {
         Events.on('empty-trash', this.emptyTrash.bind(this));
         Events.on('select-entry', this.selectEntry.bind(this));
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
-        Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
         Events.on('main-window-blur', this.mainWindowBlur.bind(this));
         Events.on('main-window-focus', this.mainWindowFocus.bind(this));
         Events.on('main-window-will-close', this.mainWindowWillClose.bind(this));
@@ -330,35 +327,13 @@ class AppModel {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
 
-        const devicesToMatchOtpEntries = files.filter((file) => file.backend === 'otp-device');
-
-        const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
-
         files
             .filter((file) => file.backend !== 'otp-device')
             .forEach((file) => {
                 file.forEachEntry(preparedFilter, (entry) => {
-                    if (matchedOtpEntrySet) {
-                        for (const device of devicesToMatchOtpEntries) {
-                            const matchingEntry = device.getMatchingEntry(entry);
-                            if (matchingEntry) {
-                                matchedOtpEntrySet.add(matchingEntry);
-                            }
-                        }
-                    }
                     entries.push(entry);
                 });
             });
-
-        if (devicesToMatchOtpEntries.length) {
-            for (const device of devicesToMatchOtpEntries) {
-                device.forEachEntry(preparedFilter, (entry) => {
-                    if (!matchedOtpEntrySet || !matchedOtpEntrySet.has(entry)) {
-                        entries.push(entry);
-                    }
-                });
-            }
-        }
 
         return entries;
     }
@@ -705,8 +680,7 @@ class AppModel {
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: fileInfo?.backup || null,
-            chalResp: params.chalResp
+            backup: fileInfo?.backup || null
         });
         if (params.encryptedPassword) {
             file.encryptedPassword = fileInfo.encryptedPassword;
@@ -799,8 +773,7 @@ class AppModel {
             rev,
             syncDate: file.syncDate || dt,
             openDate: dt,
-            backup: file.backup,
-            chalResp: file.chalResp
+            backup: file.backup
         });
         switch (this.settings.rememberKeyFiles) {
             case 'data':
@@ -859,14 +832,6 @@ class AppModel {
         const backup = file.backup;
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
-        }
-        if (this.settings.yubiKeyAutoOpen) {
-            if (
-                this.attachedYubiKeysCount > 0 &&
-                !this.files.some((f) => f.backend === 'otp-device')
-            ) {
-                this.tryOpenOtpDeviceInBackground();
-            }
         }
         if (this.settings.deviceOwnerAuth) {
             this.saveEncryptedPassword(file, params);
@@ -950,8 +915,7 @@ class AppModel {
                 opts: this.getStoreOpts(file),
                 modified: file.dirty ? fileInfo.modified : file.modified,
                 editState: file.dirty ? fileInfo.editState : file.getLocalEditState(),
-                syncDate: file.syncDate,
-                chalResp: file.chalResp
+                syncDate: file.syncDate
             });
             if (this.settings.rememberKeyFiles === 'data') {
                 fileInfo.set({
@@ -1295,46 +1259,6 @@ class AppModel {
         }
         if (needBackup) {
             this.backupFile(file, data, noop);
-        }
-    }
-
-    usbDevicesChanged() {
-        const attachedYubiKeysCount = this.attachedYubiKeysCount;
-
-        this.attachedYubiKeysCount = UsbListener.attachedYubiKeys;
-
-        if (!this.settings.yubiKeyAutoOpen) {
-            return;
-        }
-
-        const isNewYubiKey = UsbListener.attachedYubiKeys > attachedYubiKeysCount;
-        const hasOpenFiles = this.files.some(
-            (file) => file.active && file.backend !== 'otp-device'
-        );
-
-        if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
-            this.tryOpenOtpDeviceInBackground();
-        }
-    }
-
-    tryOpenOtpDeviceInBackground() {
-        this.appLogger.debug('Auto-opening a YubiKey');
-        this.openOtpDevice((err) => {
-            this.appLogger.debug('YubiKey auto-open complete', err);
-        });
-    }
-
-    getMatchingOtpEntry(entry) {
-        if (!this.settings.yubiKeyMatchEntries) {
-            return null;
-        }
-        for (const file of this.files) {
-            if (file.backend === 'otp-device') {
-                const matchingEntry = file.getMatchingEntry(entry);
-                if (matchingEntry) {
-                    return matchingEntry;
-                }
-            }
         }
     }
 

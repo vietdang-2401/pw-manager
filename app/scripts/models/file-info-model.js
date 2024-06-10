@@ -17,7 +17,6 @@ const DefaultProperties = {
     opts: null,
     backup: null,
     fingerprint: null, // obsolete
-    chalResp: null,
     encryptedPassword: null,
     encryptedPasswordDate: null
 };

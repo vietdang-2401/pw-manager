@@ -61,24 +61,6 @@ const Features = {
         }
 
         return this._browserIcon;
-    },
-    get supportsBrowserExtensions() {
-        return !this.isMobile && (this.isDesktop || this.browserIcon !== 'safari');
-    },
-    get extensionBrowserFamily() {
-        if (Features.isDesktop) {
-            return undefined;
-        } else if (/Gecko\//.test(navigator.userAgent)) {
-            return 'Firefox';
-        } else if (/Edg\//.test(navigator.userAgent)) {
-            return 'Edge';
-        } else if (/Chrome\//.test(navigator.userAgent)) {
-            return 'Chrome';
-        } else if (this.isMac && /Safari\//.test(navigator.userAgent)) {
-            return 'Safari';
-        } else {
-            return 'Chrome';
-        }
     }
 };
 

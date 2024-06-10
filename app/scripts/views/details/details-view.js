@@ -4,7 +4,6 @@ import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { KeyHandler } from 'comp/browser/key-handler';
-import { OtpQrReader } from 'comp/format/otp-qr-reader';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
 import { Timeouts } from 'const/timeouts';
@@ -60,12 +59,9 @@ class DetailsView extends View {
         this.listenTo(Events, 'copy-password', this.copyPassword);
         this.listenTo(Events, 'copy-user', this.copyUserName);
         this.listenTo(Events, 'copy-url', this.copyUrl);
-        this.listenTo(Events, 'copy-otp', this.copyOtp);
         this.listenTo(Events, 'toggle-settings', this.settingsToggled);
         this.listenTo(Events, 'context-menu-select', this.contextMenuSelect);
         this.listenTo(Events, 'set-locale', this.render);
-        this.listenTo(Events, 'qr-read', this.otpCodeRead);
-        this.listenTo(Events, 'qr-enter-manually', this.otpEnterManually);
         this.onKey(
             Keys.DOM_VK_C,
             this.copyPasswordFromShortcut,
@@ -75,7 +71,6 @@ class DetailsView extends View {
         );
         this.onKey(Keys.DOM_VK_B, this.copyUserName, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_U, this.copyUrl, KeyHandler.SHORTCUT_ACTION);
-        this.onKey(Keys.DOM_VK_2, this.copyOtp, KeyHandler.SHORTCUT_OPT);
         if (AutoType.enabled) {
             this.onKey(Keys.DOM_VK_T, () => this.autoType(), KeyHandler.SHORTCUT_ACTION);
         }
@@ -281,7 +276,6 @@ class DetailsView extends View {
                         text: Locale.detMenuHideEmpty
                     });
                 }
-                moreOptions.push({ value: 'otp', icon: 'clock', text: Locale.detSetupOtp });
                 if (AutoType.enabled) {
                     moreOptions.push({
                         value: 'auto-type',
@@ -321,9 +315,6 @@ class DetailsView extends View {
                 this.render();
                 break;
             }
-            case 'otp':
-                this.setupOtp();
-                break;
             case 'auto-type':
                 this.toggleAutoType();
                 break;
@@ -464,27 +455,10 @@ class DetailsView extends View {
 
     showEntry(entry) {
         this.model = entry;
-        this.initOtp();
         this.render();
         if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
-    }
-
-    initOtp() {
-        this.matchingOtpEntry = null;
-
-        if (!this.model) {
-            return;
-        }
-
-        this.model.initOtpGenerator?.();
-        if (this.model.backend === 'otp-device') {
-            return;
-        }
-
-        this.matchingOtpEntry = this.appModel.getMatchingOtpEntry(this.model);
-        this.matchingOtpEntry?.initOtpGenerator();
     }
 
     copyKeyPress(editView) {
@@ -511,10 +485,6 @@ class DetailsView extends View {
         if (!this.model) {
             return;
         }
-        if (this.model.backend === 'otp-device') {
-            this.copyOtp();
-            e.preventDefault();
-        }
         const copied = this.copyKeyPress(this.getFieldView('$Password'));
         if (copied) {
             e.preventDefault();
@@ -531,18 +501,6 @@ class DetailsView extends View {
 
     copyUrl() {
         this.copyKeyPress(this.getFieldView('$URL'));
-    }
-
-    copyOtp() {
-        const otpField = this.getFieldView('$otp');
-        if (this.model.backend === 'otp-device') {
-            if (!otpField) {
-                return false;
-            }
-            otpField.copyValue();
-            return true;
-        }
-        this.copyKeyPress(otpField);
     }
 
     showCopyTip() {
@@ -572,12 +530,7 @@ class DetailsView extends View {
         if (e.field) {
             if (e.field[0] === '$') {
                 let fieldName = e.field.substr(1);
-                if (fieldName === 'otp') {
-                    if (this.otpFieldChanged(e.val)) {
-                        this.entryUpdated();
-                        return;
-                    }
-                } else if (e.newField) {
+                if (e.newField) {
                     if (fieldName) {
                         this.model.setField(fieldName, undefined);
                     }
@@ -637,22 +590,6 @@ class DetailsView extends View {
         if (e.tab) {
             this.focusNextField(e.tab);
         }
-    }
-
-    otpFieldChanged(value) {
-        let oldValue = this.model.fields.otp;
-        if (oldValue && oldValue.isProtected) {
-            oldValue = oldValue.getText();
-        }
-        if (value && value.isProtected) {
-            value = value.getText();
-        }
-        if (oldValue === value) {
-            this.render();
-            return false;
-        }
-        this.model.setOtpUrl(value);
-        return true;
     }
 
     dragover(e) {
@@ -734,9 +671,6 @@ class DetailsView extends View {
     }
 
     editTitle() {
-        if (this.model.backend === 'otp-device') {
-            return;
-        }
         const input = $('<input/>')
             .addClass('details__header-title-input')
             .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: 'Title' })
@@ -798,7 +732,6 @@ class DetailsView extends View {
 
     entryUpdated(skipRender) {
         Events.emit('entry-updated', { entry: this.model });
-        this.initOtp();
         if (!skipRender) {
             this.render();
         }
@@ -894,19 +827,12 @@ class DetailsView extends View {
         const canCopy = document.queryCommandSupported('copy');
         const options = [];
         if (canCopy) {
-            if (this.model.backend === 'otp-device') {
-                options.push({
-                    value: 'det-copy-otp',
-                    icon: 'copy',
-                    text: Locale.detMenuCopyOtp
-                });
-            } else {
-                options.push({
-                    value: 'det-copy-password',
-                    icon: 'copy',
-                    text: Locale.detMenuCopyPassword
-                });
-            }
+            options.push({
+                value: 'det-copy-password',
+                icon: 'copy',
+                text: Locale.detMenuCopyPassword
+            });
+
             options.push({
                 value: 'det-copy-user',
                 icon: 'copy',
@@ -938,9 +864,6 @@ class DetailsView extends View {
             case 'det-copy-user':
                 this.copyUserName();
                 break;
-            case 'det-copy-otp':
-                this.copyOtp();
-                break;
             case 'det-add-new':
                 this.addNewField();
                 break;
@@ -956,42 +879,6 @@ class DetailsView extends View {
         }
     }
 
-    setupOtp() {
-        OtpQrReader.read();
-    }
-
-    otpCodeRead(otp) {
-        this.model.setOtp(otp);
-        this.entryUpdated();
-    }
-
-    otpEnterManually() {
-        if (this.model.fields.otp) {
-            const otpField = this.fieldViews.find((f) => f.model.name === '$otp');
-            if (otpField) {
-                otpField.edit();
-            }
-        } else {
-            this.moreView.remove();
-            this.moreView = null;
-            const fieldView = new FieldViewCustom(
-                {
-                    name: '$otp',
-                    title: 'otp',
-                    newField: 'otp',
-                    value: kdbxweb.ProtectedValue.fromString('')
-                },
-                {
-                    parent: this.$el.find('.details__body-fields')[0]
-                }
-            );
-            fieldView.on('change', this.fieldChanged.bind(this));
-            fieldView.render();
-            fieldView.edit();
-            this.fieldViews.push(fieldView);
-        }
-    }
-
     toggleAutoType() {
         if (this.views.autoType) {
             this.views.autoType.remove();
@@ -1004,22 +891,7 @@ class DetailsView extends View {
 
     autoType(sequence) {
         const entry = this.model;
-        const hasOtp =
-            sequence?.includes('{TOTP}') || (entry.backend === 'otp-device' && !sequence);
-        if (hasOtp) {
-            const otpField = this.getFieldView('$otp');
-            otpField.refreshOtp((err) => {
-                if (!err) {
-                    Events.emit('auto-type', {
-                        entry,
-                        sequence,
-                        context: { resolved: { totp: otpField.otpValue } }
-                    });
-                }
-            });
-        } else {
-            Events.emit('auto-type', { entry, sequence });
-        }
+        Events.emit('auto-type', { entry, sequence });
     }
 
     checkPasswordIssues() {

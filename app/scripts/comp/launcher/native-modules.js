@@ -1,5 +1,4 @@
 import * as kdbxweb from 'kdbxweb';
-import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
 import { Timeouts } from 'const/timeouts';
@@ -13,7 +12,6 @@ if (Launcher) {
     let hostStartPromise;
     let callId = 0;
     let promises = {};
-    let ykChalRespCallbacks = {};
 
     const { ipcRenderer } = Launcher.electron();
     ipcRenderer.on('nativeModuleCallback', (e, msg) => NativeModules.hostCallback(msg));
@@ -23,10 +21,6 @@ if (Launcher) {
     ipcRenderer.on('log', (e, ...args) => NativeModules.log(...args));
 
     const handlers = {
-        yubikeys(numYubiKeys) {
-            Events.emit('native-modules-yubikeys', { numYubiKeys });
-        },
-
         log(...args) {
             logger.info('Message from host', ...args);
         },
@@ -41,17 +35,6 @@ if (Launcher) {
                 } else {
                     promise.resolve(result);
                 }
-            }
-        },
-
-        yubiKeyChallengeResponseResult({ callbackId, error, result }) {
-            const callback = ykChalRespCallbacks[callbackId];
-            if (callback) {
-                const willBeCalledAgain = error && error.touchRequested;
-                if (!willBeCalledAgain) {
-                    delete ykChalRespCallbacks[callbackId];
-                }
-                callback(error, result);
             }
         }
     };
@@ -70,10 +53,6 @@ if (Launcher) {
             hostStartPromise = this.callNoWait('start').then(() => {
                 hostStartPromise = undefined;
                 hostRunning = true;
-
-                if (this.usbListenerRunning) {
-                    return this.call('startUsbListener');
-                }
             });
 
             return hostStartPromise;
@@ -98,11 +77,6 @@ if (Launcher) {
                 promise.reject(err);
             }
             promises = {};
-
-            for (const callback of Object.values(ykChalRespCallbacks)) {
-                callback(err);
-            }
-            ykChalRespCallbacks = {};
 
             if (code !== 0) {
                 this.autoRestartHost();
@@ -152,33 +126,6 @@ if (Launcher) {
 
                 ipcRenderer.send('nativeModuleCall', { cmd, args, callId });
             });
-        },
-
-        startUsbListener() {
-            this.call('startUsbListener');
-            this.usbListenerRunning = true;
-        },
-
-        stopUsbListener() {
-            this.usbListenerRunning = false;
-            if (hostRunning) {
-                this.call('stopUsbListener');
-            }
-        },
-
-        getYubiKeys(config) {
-            return this.call('getYubiKeys', config);
-        },
-
-        yubiKeyChallengeResponse(yubiKey, challenge, slot, callback) {
-            ykChalRespCallbacks[callId] = callback;
-            return this.call('yubiKeyChallengeResponse', yubiKey, challenge, slot, callId);
-        },
-
-        yubiKeyCancelChallengeResponse() {
-            if (hostRunning) {
-                this.call('yubiKeyCancelChallengeResponse');
-            }
         },
 
         argon2(password, salt, options) {

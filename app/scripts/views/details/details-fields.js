@@ -3,7 +3,6 @@ import { StringFormat } from 'util/formatting/string-format';
 import { DateFormat } from 'comp/i18n/date-format';
 import { AppModel } from 'models/app-model';
 import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
-import { FieldViewOtp } from 'views/fields/field-view-otp';
 import { FieldViewSelect } from 'views/fields/field-view-select';
 import { FieldViewAutocomplete } from 'views/fields/field-view-autocomplete';
 import { FieldViewText } from 'views/fields/field-view-text';
@@ -17,7 +16,6 @@ import { ExtraUrlFieldName } from 'models/entry-model';
 
 function createDetailsFields(detailsView) {
     const model = detailsView.model;
-    const otpEntry = detailsView.matchingOtpEntry;
 
     const fieldViews = [];
     const fieldViewsAside = [];
@@ -41,19 +39,6 @@ function createDetailsFields(detailsView) {
                     return model.user;
                 },
                 sequence: '{USERNAME}'
-            })
-        );
-        fieldViews.push(
-            new FieldViewOtp({
-                name: '$otp',
-                title: Locale.detOtpField,
-                value() {
-                    return model.otpGenerator;
-                },
-                sequence: '{TOTP}',
-                readonly: true,
-                needsTouch: model.needsTouch,
-                deviceShortName: model.device.shortName
             })
         );
     } else {
@@ -209,62 +194,32 @@ function createDetailsFields(detailsView) {
                 })
             );
         }
-        if (otpEntry) {
-            fieldViews.push(
-                new FieldViewOtp({
-                    name: '$otp',
-                    title: Locale.detOtpField,
-                    value() {
-                        return otpEntry.otpGenerator;
-                    },
-                    sequence: '{TOTP}',
-                    readonly: true,
-                    needsTouch: otpEntry.needsTouch,
-                    deviceShortName: otpEntry.device.shortName
-                })
-            );
-        }
         for (const field of Object.keys(model.fields)) {
-            if (field === 'otp' && model.otpGenerator) {
-                if (!otpEntry) {
-                    fieldViews.push(
-                        new FieldViewOtp({
-                            name: '$' + field,
-                            title: Locale.detOtpField,
-                            value() {
-                                return model.otpGenerator;
-                            },
-                            sequence: '{TOTP}'
-                        })
-                    );
-                }
+            const isUrl = field.startsWith(ExtraUrlFieldName);
+            if (isUrl) {
+                fieldViews.push(
+                    new FieldViewUrl({
+                        name: '$' + field,
+                        title: StringFormat.capFirst(Locale.website),
+                        isExtraUrl: true,
+                        value() {
+                            return model.fields[field];
+                        },
+                        sequence: `{S:${field}}`
+                    })
+                );
             } else {
-                const isUrl = field.startsWith(ExtraUrlFieldName);
-                if (isUrl) {
-                    fieldViews.push(
-                        new FieldViewUrl({
-                            name: '$' + field,
-                            title: StringFormat.capFirst(Locale.website),
-                            isExtraUrl: true,
-                            value() {
-                                return model.fields[field];
-                            },
-                            sequence: `{S:${field}}`
-                        })
-                    );
-                } else {
-                    fieldViews.push(
-                        new FieldViewCustom({
-                            name: '$' + field,
-                            title: field,
-                            multiline: true,
-                            value() {
-                                return model.fields[field];
-                            },
-                            sequence: `{S:${field}}`
-                        })
-                    );
-                }
+                fieldViews.push(
+                    new FieldViewCustom({
+                        name: '$' + field,
+                        title: field,
+                        multiline: true,
+                        value() {
+                            return model.fields[field];
+                        },
+                        sequence: `{S:${field}}`
+                    })
+                );
             }
         }
     }

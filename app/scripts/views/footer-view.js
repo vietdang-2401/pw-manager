@@ -2,7 +2,6 @@ import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
-import { UpdateModel } from 'models/update-model';
 import { GeneratorView } from 'views/generator-view';
 import template from 'templates/footer.hbs';
 
@@ -33,13 +32,11 @@ class FooterView extends View {
         this.listenTo(this.model.files, 'change', this.render);
         this.listenTo(Events, 'file-changed', this.render);
         this.listenTo(Events, 'set-locale', this.render);
-        this.listenTo(UpdateModel, 'change:updateStatus', this.render);
     }
 
     render() {
         super.render({
-            files: this.model.files,
-            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.updateStatus) >= 0
+            files: this.model.files
         });
     }
 

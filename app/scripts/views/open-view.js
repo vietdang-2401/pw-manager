@@ -8,8 +8,6 @@ import { KeyHandler } from 'comp/browser/key-handler';
 import { SecureInput } from 'comp/browser/secure-input';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
-import { UsbListener } from 'comp/app/usb-listener';
-import { YubiKey } from 'comp/app/yubikey';
 import { Keys } from 'const/keys';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
@@ -19,7 +17,6 @@ import { Logger } from 'util/logger';
 import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
-import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
 import { NativeModules } from 'comp/launcher/native-modules';
@@ -40,7 +37,6 @@ class OpenView extends View {
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-demo': 'createDemo',
-        'click .open__icon-yubikey': 'openYubiKey',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
         'click .open__icon-settings': 'openSettings',
@@ -51,7 +47,6 @@ class OpenView extends View {
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
-        'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
         'click .open__message-cancel-btn': 'openMessageCancelClick',
@@ -79,7 +74,6 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
-        this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged.bind(this));
         this.listenTo(Events, 'unlock-message-changed', this.unlockMessageChanged.bind(this));
         this.once('remove', () => {
             this.passwordInput.reset();
@@ -110,13 +104,6 @@ class OpenView extends View {
             !this.model.settings.canOpen &&
             !this.model.settings.canCreate &&
             !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
-        const hasYubiKeys = !!UsbListener.attachedYubiKeys;
-        const canOpenYubiKey =
-            hasYubiKeys &&
-            this.model.settings.canOpenOtpDevice &&
-            this.model.settings.yubiKeyShowIcon &&
-            !this.model.files.get('yubikey');
-        const canUseChalRespYubiKey = hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
 
         const showMethodOpenFile = this.showMethodOpenFile;
         super.render({
@@ -130,8 +117,6 @@ class OpenView extends View {
             canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
-            canOpenYubiKey,
-            canUseChalRespYubiKey,
             showMore,
             showLogo,
             showMethodOpenFile
@@ -151,8 +136,7 @@ class OpenView extends View {
             keyFilePath: null,
             fileData: null,
             rev: null,
-            opts: null,
-            chalResp: null
+            opts: null
         };
     }
 
@@ -338,7 +322,7 @@ class OpenView extends View {
 
     displayOpenFile() {
         this.$el.addClass('open--file');
-        this.$el.find('.open__settings-key-file,.open__settings-yubikey').removeClass('hide');
+        this.$el.find('.open__settings-key-file').removeClass('hide');
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', Locale.openPassFor + ' ' + this.params.name);
         this.focusInput();
@@ -350,12 +334,6 @@ class OpenView extends View {
             .find('.open__settings-key-file-name')
             .text(this.params.keyFileName || this.params.keyFilePath || Locale.openKeyFile);
         this.focusInput();
-    }
-
-    displayOpenChalResp() {
-        this.$el
-            .find('.open__settings-yubikey')
-            .toggleClass('open__settings-yubikey--active', !!this.params.chalResp);
     }
 
     displayOpenDeviceOwnerAuth() {
@@ -629,12 +607,10 @@ class OpenView extends View {
         this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
         this.params.opts = fileInfo.opts;
-        this.params.chalResp = fileInfo.chalResp;
         this.setEncryptedPassword(fileInfo);
 
         this.displayOpenFile();
         this.displayOpenKeyFile();
-        this.displayOpenChalResp();
         this.displayOpenDeviceOwnerAuth();
 
         if (fileWasClicked) {
@@ -1051,92 +1027,6 @@ class OpenView extends View {
         this.inputEl.val('');
         this.passwordInput.reset();
         this.passwordInput.setElement(this.inputEl);
-    }
-
-    usbDevicesChanged() {
-        if (this.model.settings.canOpenOtpDevice) {
-            const hasYubiKeys = !!UsbListener.attachedYubiKeys;
-
-            const showOpenIcon = hasYubiKeys && this.model.settings.yubiKeyShowIcon;
-            this.$el.find('.open__icon-yubikey').toggleClass('hide', !showOpenIcon);
-
-            const showChallengeResponseIcon =
-                hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
-            this.$el
-                .find('.open__settings-yubikey')
-                .toggleClass('open__settings-yubikey--present', !!showChallengeResponseIcon);
-
-            if (!hasYubiKeys && this.busy && this.otpDevice) {
-                this.otpDevice.cancelOpen();
-            }
-        }
-    }
-
-    openYubiKey() {
-        if (this.busy && this.otpDevice) {
-            this.otpDevice.cancelOpen();
-        }
-        if (!this.busy) {
-            this.busy = true;
-            this.inputEl.attr('disabled', 'disabled');
-            const icon = this.$el.find('.open__icon-yubikey');
-            icon.toggleClass('flip3d', true);
-
-            YubiKey.checkToolStatus().then((status) => {
-                if (status !== 'ok') {
-                    icon.toggleClass('flip3d', false);
-                    this.inputEl.removeAttr('disabled');
-                    this.busy = false;
-                    return Events.emit('toggle-settings', 'devices');
-                }
-                this.otpDevice = this.model.openOtpDevice((err) => {
-                    if (err && !YubiKey.aborted) {
-                        Alerts.error({
-                            header: Locale.openError,
-                            body: Locale.openErrorDescription,
-                            pre: this.errorToString(err)
-                        });
-                    }
-                    this.otpDevice = null;
-                    icon.toggleClass('flip3d', false);
-                    this.inputEl.removeAttr('disabled');
-                    this.busy = false;
-                });
-            });
-        }
-    }
-
-    selectYubiKeyChalResp() {
-        if (this.busy) {
-            return;
-        }
-
-        if (this.params.chalResp) {
-            this.params.chalResp = null;
-            this.el
-                .querySelector('.open__settings-yubikey')
-                .classList.remove('open__settings-yubikey--active');
-            this.focusInput();
-            return;
-        }
-
-        const chalRespView = new OpenChalRespView();
-        chalRespView.on('select', ({ vid, pid, serial, slot }) => {
-            this.params.chalResp = { vid, pid, serial, slot };
-            this.el
-                .querySelector('.open__settings-yubikey')
-                .classList.add('open__settings-yubikey--active');
-            this.focusInput();
-        });
-
-        Alerts.alert({
-            header: Locale.openChalRespHeader,
-            icon: 'usb-token',
-            buttons: [{ result: '', title: Locale.alertCancel }],
-            esc: '',
-            click: '',
-            view: chalRespView
-        });
     }
 
     errorToString(err) {

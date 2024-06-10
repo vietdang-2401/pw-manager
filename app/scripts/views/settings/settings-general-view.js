@@ -2,17 +2,12 @@ import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
-import { RuntimeInfo } from 'const/runtime-info';
-import { Updater } from 'comp/app/updater';
 import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { UpdateModel } from 'models/update-model';
-import { SemVer } from 'util/data/semver';
 import { Features } from 'util/features';
-import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { mapObject, minmax } from 'util/fn';
@@ -75,14 +70,10 @@ class SettingsGeneralView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.listenTo(UpdateModel, 'change', this.render);
         this.listenTo(Events, 'theme-applied', this.render);
     }
 
     render() {
-        const updateReady = UpdateModel.updateStatus === 'ready';
-        const updateFound = UpdateModel.updateStatus === 'found';
-        const updateManual = UpdateModel.updateManual;
         const storageProviders = this.getStorageProviders();
 
         super.render({
@@ -103,7 +94,6 @@ class SettingsGeneralView extends View {
             minimizeOnClose: AppSettingsModel.minimizeOnClose,
             minimizeOnFieldCopy: AppSettingsModel.minimizeOnFieldCopy,
             devTools: Launcher && Launcher.devTools,
-            canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
             canMinimize: !!Launcher,
             canDetectMinimize: !!Launcher,
@@ -122,14 +112,6 @@ class SettingsGeneralView extends View {
             lockOnOsLock: AppSettingsModel.lockOnOsLock,
             tableView: AppSettingsModel.tableView,
             canSetTableView: !Features.isMobile,
-            autoUpdate: Updater.getAutoUpdateType(),
-            updateInProgress: Updater.updateInProgress(),
-            updateInfo: this.getUpdateInfo(),
-            updateWaitingReload: updateReady && !Launcher,
-            showUpdateBlock: Updater.enabled && !updateManual,
-            updateReady,
-            updateFound,
-            updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.colorfulIcons,
             useMarkdown: AppSettingsModel.useMarkdown,
@@ -149,57 +131,6 @@ class SettingsGeneralView extends View {
             disableOfflineStorage: AppSettingsModel.disableOfflineStorage,
             shortLivedStorageToken: AppSettingsModel.shortLivedStorageToken
         });
-    }
-
-    getUpdateInfo() {
-        switch (UpdateModel.status) {
-            case 'checking':
-                return Locale.setGenUpdateChecking + '...';
-            case 'error': {
-                let errMsg = Locale.setGenErrorChecking;
-                if (UpdateModel.lastError) {
-                    errMsg += ': ' + UpdateModel.lastError;
-                }
-                if (UpdateModel.lastSuccessCheckDate) {
-                    errMsg +=
-                        '. ' +
-                        Locale.setGenLastCheckSuccess.replace(
-                            '{}',
-                            DateFormat.dtStr(UpdateModel.lastSuccessCheckDate)
-                        ) +
-                        ': ' +
-                        Locale.setGenLastCheckVer.replace('{}', UpdateModel.lastVersion);
-                }
-                return errMsg;
-            }
-            case 'ok': {
-                let msg =
-                    Locale.setGenCheckedAt +
-                    ' ' +
-                    DateFormat.dtStr(UpdateModel.lastCheckDate) +
-                    ': ';
-                const cmp = SemVer.compareVersions(RuntimeInfo.version, UpdateModel.lastVersion);
-                if (cmp >= 0) {
-                    msg += Locale.setGenLatestVer;
-                } else {
-                    msg +=
-                        Locale.setGenNewVer.replace('{}', UpdateModel.lastVersion) +
-                        ' ' +
-                        DateFormat.dStr(UpdateModel.lastVersionReleaseDate);
-                }
-                switch (UpdateModel.updateStatus) {
-                    case 'downloading':
-                        return msg + '. ' + Locale.setGenDownloadingUpdate;
-                    case 'extracting':
-                        return msg + '. ' + Locale.setGenExtractingUpdate;
-                    case 'error':
-                        return msg + '. ' + Locale.setGenCheckErr;
-                }
-                return msg;
-            }
-            default:
-                return Locale.setGenNeverChecked;
-        }
     }
 
     getStorageProviders() {
@@ -297,18 +228,6 @@ class SettingsGeneralView extends View {
     changeIdleMinutes(e) {
         const idleMinutes = +e.target.value;
         AppSettingsModel.idleMinutes = idleMinutes;
-    }
-
-    changeAutoUpdate(e) {
-        const autoUpdate = e.target.value || false;
-        AppSettingsModel.autoUpdate = autoUpdate;
-        if (autoUpdate) {
-            Updater.scheduleNextCheck();
-        }
-    }
-
-    checkUpdate() {
-        Updater.check(true);
     }
 
     changeAutoSave(e) {
@@ -452,22 +371,8 @@ class SettingsGeneralView extends View {
         AppSettingsModel.deviceOwnerAuthTimeoutMinutes = deviceOwnerAuthTimeout;
     }
 
-    installUpdateAndRestart() {
-        if (Launcher) {
-            Updater.installAndRestart();
-        } else {
-            window.location.reload();
-        }
-    }
-
     downloadUpdate() {
         Launcher.openLink(Links.Desktop);
-    }
-
-    installFoundUpdate() {
-        Updater.update(true, () => {
-            Updater.installAndRestart();
-        });
     }
 
     changeExpandGroups(e) {

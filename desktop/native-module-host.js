@@ -1,83 +1,11 @@
 const { readXoredValue, makeXoredValue } = require('./scripts/util/byte-utils');
 const { reqNative } = require('./scripts/util/req-native');
 
-const YubiKeyVendorIds = [0x1050];
-const attachedYubiKeys = [];
-let usbListenerRunning = false;
-let usbListenerInitialized = false;
 let autoType;
 let callback;
 
 const messageHandlers = {
     start() {},
-
-    startUsbListener() {
-        if (usbListenerRunning) {
-            return;
-        }
-
-        if (!usbListenerInitialized) {
-            const usbDetection = reqNative('usb-detection');
-
-            usbDetection.registerAdded(usbDeviceAttached);
-            usbDetection.registerRemoved(usbDeviceDetached);
-
-            usbDetection.startMonitoring();
-
-            usbListenerInitialized = true;
-        }
-
-        fillAttachedYubiKeys();
-
-        usbListenerRunning = true;
-    },
-
-    stopUsbListener() {
-        if (!usbListenerRunning) {
-            return;
-        }
-
-        usbListenerRunning = false;
-        attachedYubiKeys.length = 0;
-    },
-
-    getYubiKeys(config) {
-        return new Promise((resolve, reject) => {
-            const ykChapResp = reqNative('yubikey-chalresp');
-            ykChapResp.getYubiKeys(config, (err, yubiKeys) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(yubiKeys);
-                }
-            });
-        });
-    },
-
-    yubiKeyChallengeResponse(yubiKey, challenge, slot, callbackId) {
-        const ykChalResp = reqNative('yubikey-chalresp');
-        challenge = Buffer.from(challenge);
-        ykChalResp.challengeResponse(yubiKey, challenge, slot, (error, result) => {
-            if (error) {
-                error = errorToTransport(error);
-                if (error.code === ykChalResp.YK_ENOKEY) {
-                    error.noKey = true;
-                }
-                if (error.code === ykChalResp.YK_ETIMEOUT) {
-                    error.timeout = true;
-                }
-            }
-            if (result) {
-                result = [...result];
-            }
-            return callback('yubiKeyChallengeResponseResult', { callbackId, error, result });
-        });
-    },
-
-    yubiKeyCancelChallengeResponse() {
-        const ykChalResp = reqNative('yubikey-chalresp');
-        ykChalResp.cancelChallengeResponse();
-    },
 
     argon2(password, salt, options) {
         const argon2 = reqNative('argon2');
@@ -145,48 +73,6 @@ const messageHandlers = {
         return getAutoType().ensureModifierNotPressed();
     }
 };
-
-function isYubiKey(device) {
-    return YubiKeyVendorIds.includes(device.vendorId);
-}
-
-function usbDeviceAttached(device) {
-    if (!usbListenerRunning) {
-        return;
-    }
-    if (isYubiKey(device)) {
-        attachedYubiKeys.push(device);
-        reportYubiKeys();
-    }
-}
-
-function usbDeviceDetached(device) {
-    if (!usbListenerRunning) {
-        return;
-    }
-    if (isYubiKey(device)) {
-        const index = attachedYubiKeys.findIndex((yk) => yk.deviceAddress === device.deviceAddress);
-        if (index >= 0) {
-            attachedYubiKeys.splice(index, 1);
-        }
-        reportYubiKeys();
-    }
-}
-
-function fillAttachedYubiKeys() {
-    const usbDetection = reqNative('usb-detection');
-    usbDetection.find((ignoredError, devices) => {
-        if (devices) {
-            attachedYubiKeys.push(...devices.filter(isYubiKey));
-            reportYubiKeys();
-        }
-        return undefined;
-    });
-}
-
-function reportYubiKeys() {
-    callback('yubikeys', attachedYubiKeys.length);
-}
 
 function getAutoType() {
     if (!autoType) {
@@ -300,13 +186,6 @@ function startInMain(channel) {
     callback = (cmd, ...args) => {
         channel.emit('message', { cmd, args });
     };
-
-    const { app } = require('electron');
-    app.on('will-quit', () => {
-        if (usbListenerInitialized) {
-            reqNative('usb-detection').stopMonitoring();
-        }
-    });
 }
 
 module.exports = { startInOwnProcess, startInMain };

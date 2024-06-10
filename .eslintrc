@@ -6,7 +6,7 @@
         "one-var": "off",
         "space-before-function-paren": "off",
         "no-throw-literal": "off",
-        "camelcase": ["error", { "properties": "always" }],
+        "camelcase": ["off"],
         "no-console": "off",
         "no-alert": "error",
         "no-debugger": "error",
