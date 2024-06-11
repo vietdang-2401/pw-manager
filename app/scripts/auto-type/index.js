@@ -46,13 +46,13 @@ const AutoType = {
             if (this.selectEntryView) {
                 return;
             }
-            if (Launcher.isAppFocused()) {
-                return Alerts.error({
-                    header: Locale.autoTypeError,
-                    body: Locale.autoTypeErrorGlobal,
-                    skipIfAlertDisplayed: true
-                });
-            }
+            // if (Launcher.isAppFocused()) {
+            //     return Alerts.error({
+            //         header: Locale.autoTypeError,
+            //         body: Locale.autoTypeErrorGlobal,
+            //         skipIfAlertDisplayed: true
+            //     });
+            // }
             this.selectEntryAndRun();
         }
     },
