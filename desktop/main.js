@@ -533,7 +533,8 @@ function captureScreen() {
 function detectInputPosition(image) {
     return axios({
         method: 'POST',
-        url: 'http://localhost:9001/logins/2',
+        url: 'http://localhost:9001/form-field-detection/2',
+        // url: 'https://detect.roboflow.com/form-field-detection/2',
         params: {
             api_key: 'YZInjnBeAFvFJdyRQW9v',
             confidence: 60
