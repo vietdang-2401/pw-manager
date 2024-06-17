@@ -8,10 +8,10 @@ if (process.send && process.argv.includes('--native-module-host')) {
 const electron = require('electron');
 const { screen } = require('electron/main');
 const path = require('path');
+const robot = require('@jitsi/robotjs');
 const axios = require('axios');
 const fs = require('fs');
 const url = require('url');
-const robot = require('@jitsi/robotjs');
 
 const { locale, setLocale, getLocaleValues } = require('./scripts/locale');
 const { Logger } = require('./scripts/logger');
@@ -26,7 +26,6 @@ let mainWindow = null;
 let appIcon = null;
 let ready = false;
 let appReady = false;
-let pendingUpdateFilePath;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
 let mainWindowMaximized = false;
@@ -110,12 +109,8 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
 });
 
 main.on('window-all-closed', () => {
-    if (pendingUpdateFilePath) {
-        exitAndStartUpdate();
-    } else {
-        if (process.platform !== 'darwin') {
-            main.quit();
-        }
+    if (process.platform !== 'darwin') {
+        main.quit();
     }
 });
 main.on('ready', () => {
@@ -180,13 +175,6 @@ main.on('web-contents-created', (event, contents) => {
         }
     });
 });
-main.restartAndUpdate = function (updateFilePath) {
-    pendingUpdateFilePath = updateFilePath;
-    mainWindow.close();
-    setTimeout(() => {
-        pendingUpdateFilePath = undefined;
-    }, 1000);
-};
 main.minimizeApp = function (menuItemLabels) {
     let imagePath;
     // a workaround to correctly restore focus on windows platform
@@ -1091,11 +1079,4 @@ function setupIpcHandlers() {
     const { setupIpcHandlers } = require('./scripts/ipc');
     setupIpcHandlers();
     logProgress('setting ipc handlers');
-}
-
-function exitAndStartUpdate() {
-    if (pendingUpdateFilePath) {
-        const { installUpdate } = require('./scripts/update-installer');
-        installUpdate(pendingUpdateFilePath);
-    }
 }

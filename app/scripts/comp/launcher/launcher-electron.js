@@ -161,19 +161,6 @@ const Launcher = {
         this.exitRequested = true;
         this.requestExit();
     },
-    requestExit() {
-        const app = this.remoteApp();
-        app.setHookBeforeQuitEvent(false);
-        if (this.pendingUpdateFile) {
-            app.restartAndUpdate(this.pendingUpdateFile);
-        } else {
-            app.quit();
-        }
-    },
-    requestRestartAndUpdate(updateFilePath) {
-        this.pendingUpdateFile = updateFilePath;
-        this.requestExit();
-    },
     cancelRestart() {
         this.pendingUpdateFile = undefined;
     },

@@ -193,6 +193,11 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
                 nonull: true
             },
+            'axios': {
+                src: 'node_modules/axios',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
+                nonull: true
+            },
             'native-modules-win32-ia32': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-ia32.node',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/',

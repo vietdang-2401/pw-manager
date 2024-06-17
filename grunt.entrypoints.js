@@ -68,7 +68,8 @@ module.exports = function(grunt) {
         'build-desktop-app-content',
         'electron:win32-x64',
         'copy:native-modules-win32-x64',
-        'copy:native-messaging-host-win32-x64'
+        'copy:native-messaging-host-win32-x64',
+        'copy:axios'
     ]);
 
     grunt.registerTask('dev-desktop-linux', 'Build a Linux app in dev environment', [

@@ -1,7 +1,6 @@
 import { Events } from 'framework/events';
 import { StartProfiler } from 'comp/app/start-profiler';
 import { FileInfoCollection } from 'collections/file-info-collection';
-import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { FeatureTester } from 'comp/browser/feature-tester';
@@ -167,7 +166,6 @@ ready(() => {
     function postInit() {
         setTimeout(() => {
             SingleInstanceChecker.init();
-            AppRightsChecker.init();
             IdleTracker.init();
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }
