@@ -1,5 +1,5 @@
 /**
- * KeeWeb plugin: psychodelic
+ * PwManager plugin: psychodelic
  * @author antelle
  * @license MIT
  */

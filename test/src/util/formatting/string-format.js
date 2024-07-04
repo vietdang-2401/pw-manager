@@ -31,8 +31,8 @@ describe('StringFormat', () => {
     });
 
     it('should replace version', () => {
-        expect(StringFormat.replaceVersion('KeeWeb-1.11.123.x64.dmg', 'ver')).to.eql(
-            'KeeWeb-ver.x64.dmg'
+        expect(StringFormat.replaceVersion('PwManager-1.11.123.x64.dmg', 'ver')).to.eql(
+            'PwManager-ver.x64.dmg'
         );
     });
 });

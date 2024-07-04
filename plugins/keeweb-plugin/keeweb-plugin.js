@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 /**
- * KeeWeb plugin creator
+ * PwManager plugin creator
  * (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
  */
 
@@ -41,7 +41,7 @@ switch (op) {
 }
 
 function showBanner() {
-    console.log(`KeeWeb plugin utils`);
+    console.log(`PwManager plugin utils`);
 }
 
 function showHelp() {
@@ -157,7 +157,7 @@ function servePlugin(packageName) {
     };
     const port = serverPort || 8089;
     let keeWebHtmlCached;
-    const serveKeeWebHtml = (res) => {
+    const servePwManagerHtml = (res) => {
         if (keeWebHtmlCached) {
             res.writeHead(200);
             res.end(keeWebHtmlCached);
@@ -178,7 +178,7 @@ function servePlugin(packageName) {
                     keeWebHtmlCached = Buffer.concat(data)
                         .toString('utf8')
                         .replace('(no-config)', 'config.json');
-                    serveKeeWebHtml(res);
+                    servePwManagerHtml(res);
                 });
                 kwRes.on('error', (e) => {
                     console.error('Error loading https://app.keeweb.info', e);
@@ -206,7 +206,7 @@ function servePlugin(packageName) {
                 return;
             }
             if (req.url === '/') {
-                return serveKeeWebHtml(res);
+                return servePwManagerHtml(res);
             } else if (req.url === '/config.json') {
                 return serveConfig(res);
             }
@@ -225,7 +225,7 @@ function servePlugin(packageName) {
             });
         })
         .listen(port);
-    console.log(`Open this URL in your browser or add it to KeeWeb: https://127.0.0.1:${port}`);
+    console.log(`Open this URL in your browser or add it to PwManager: https://127.0.0.1:${port}`);
     console.log("If you see a browser warning about an unsafe website, click Proceed, it's safe.");
 }
 

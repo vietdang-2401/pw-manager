@@ -59,7 +59,7 @@ Function .onInit
     Quit
   ${EndIf}
 
-  System::Call 'kernel32::CreateMutex(i 0, i 0, t "KeeWeb-Installer-Mutex-8843DCD0") ?e'
+  System::Call 'kernel32::CreateMutex(i 0, i 0, t "PwManager-Installer-Mutex-8843DCD0") ?e'
   Pop $R0
   ${If} $R0 != 0
     MessageBox MB_ICONSTOP|MB_OK "The installer is already running."
@@ -76,7 +76,7 @@ Function AbortIfInUpdaterMode
 FunctionEnd
 
 Function FinishPageCheckboxCheckedAction
-  CreateShortCut "$DESKTOP\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
+  CreateShortCut "$DESKTOP\PwManager.lnk" "$INSTDIR\${PRODUCT_EXE}"
 FunctionEnd
 
 Section "MainSection" SEC01
@@ -106,16 +106,16 @@ Section "MainSection" SEC01
 
   SetOutPath "$INSTDIR"
   SetOverwrite on
-  File /r "tmp\desktop\KeeWeb-win32-${arch}\*"
+  File /r "tmp\desktop\PwManager-win32-${arch}\*"
   Delete "$INSTDIR\resources\app\*.*"
   RMDir /r "$INSTDIR\resources\app"
 
   ${If} $isUpdaterMode != 1
-    CreateDirectory "$SMPROGRAMS\KeeWeb"
-    CreateShortCut "$SMPROGRAMS\KeeWeb\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
+    CreateDirectory "$SMPROGRAMS\PwManager"
+    CreateShortCut "$SMPROGRAMS\PwManager\PwManager.lnk" "$INSTDIR\${PRODUCT_EXE}"
 
     !insertmacro APP_ASSOCIATE "kdbx" "kdbxfile" "KeePass Password Database" \
-      "$INSTDIR\${PRODUCT_EXE},0" "Open with KeeWeb" "$INSTDIR\${PRODUCT_EXE} $\"%1$\""
+      "$INSTDIR\${PRODUCT_EXE},0" "Open with PwManager" "$INSTDIR\${PRODUCT_EXE} $\"%1$\""
     !insertmacro UPDATEFILEASSOC
   ${EndIf}
 SectionEnd

@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
-import { KeeWebLogo } from 'const/inline-images';
+import { PwManagerLogo } from 'const/inline-images';
 import oauthPageTemplate from 'templates/oauth/complete.hbs';
 
 const DefaultPort = 48149;
@@ -26,7 +26,7 @@ const StorageOAuthListener = {
             resp.writeHead(200, 'OK', {
                 'Content-Type': 'text/html; charset=UTF-8'
             });
-            resp.end(oauthPageTemplate({ logoSrc: KeeWebLogo }));
+            resp.end(oauthPageTemplate({ logoSrc: PwManagerLogo }));
             if (!resultHandled) {
                 this.stop();
                 this.handleResult(req.url, listener);

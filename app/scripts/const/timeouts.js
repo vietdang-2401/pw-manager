@@ -19,7 +19,7 @@ const Timeouts = {
     NativeModuleHostRestartTime: 3000,
     FastAnimation: 100,
     AutoTypeCopyPaste: 300,
-    KeeWebConnectRequest: 60000
+    PwManagerConnectRequest: 60000
 };
 
 export { Timeouts };

@@ -1,13 +1,13 @@
 Unicode True
 
-!define PRODUCT_NAME "KeeWeb"
+!define PRODUCT_NAME "PwManager"
 !define PRODUCT_VERSION "${version}"
-!define PRODUCT_PUBLISHER "KeeWeb"
+!define PRODUCT_PUBLISHER "PwManager"
 !define PRODUCT_WEB_SITE "${homepage}"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define PRODUCT_EXE "KeeWeb.exe"
-!define PRODUCT_UNINST_TEMP_EXE "KeeWebUninst.exe"
+!define PRODUCT_EXE "PwManager.exe"
+!define PRODUCT_UNINST_TEMP_EXE "PwManagerUninst.exe"
 
 !define MUI_ABORTWARNING
 !define MUI_ICON "graphics\icon.ico"

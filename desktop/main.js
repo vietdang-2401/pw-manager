@@ -130,7 +130,7 @@ main.on('ready', () => {
             });
         })
         .catch((e) => {
-            electron.dialog.showErrorBox('KeeWeb', 'Error loading app: ' + e);
+            electron.dialog.showErrorBox('PwManager', 'Error loading app: ' + e);
             main.exit(2);
         });
 });
@@ -201,7 +201,7 @@ main.minimizeApp = function (menuItemLabels) {
             { label: menuItemLabels.quit, click: closeMainWindow }
         ]);
         appIcon.setContextMenu(contextMenu);
-        appIcon.setToolTip('KeeWeb');
+        appIcon.setToolTip('PwManager');
     }
 };
 main.minimizeThenHideIfInTray = function () {
@@ -551,14 +551,17 @@ function setMenu() {
             {
                 label: name,
                 submenu: [
-                    { role: 'about', label: locale.sysMenuAboutKeeWeb?.replace('{}', 'KeeWeb') },
+                    {
+                        role: 'about',
+                        label: locale.sysMenuAboutPwManager?.replace('{}', 'PwManager')
+                    },
                     { type: 'separator' },
                     { role: 'services', submenu: [], label: locale.sysMenuServices },
                     { type: 'separator' },
                     {
                         accelerator: 'Command+H',
                         role: 'hide',
-                        label: locale.sysMenuHide?.replace('{}', 'KeeWeb')
+                        label: locale.sysMenuHide?.replace('{}', 'PwManager')
                     },
                     {
                         accelerator: 'Command+Shift+H',
@@ -570,7 +573,7 @@ function setMenu() {
                     {
                         role: 'quit',
                         accelerator: 'Command+Q',
-                        label: locale.sysMenuQuit?.replace('{}', 'KeeWeb')
+                        label: locale.sysMenuQuit?.replace('{}', 'PwManager')
                     }
                 ]
             },
@@ -793,7 +796,7 @@ function hookRequestHeaders() {
     logProgress('setting request handlers');
 }
 
-// If a display is disconnected while KeeWeb is minimized, Electron does not
+// If a display is disconnected while PwManager is minimized, Electron does not
 // ensure that the restored window appears on a display that is still connected.
 // This checks to be sure the title bar is somewhere the user can grab it,
 // without making it impossible to minimize and restore a window keeping it
@@ -891,12 +894,12 @@ function loadSettingsEncryptionKey() {
 
         const keytar = reqNative('keytar');
 
-        return keytar.getPassword('KeeWeb', 'settings-key').then((key) => {
+        return keytar.getPassword('PwManager', 'settings-key').then((key) => {
             if (key) {
                 return Buffer.from(key, 'hex');
             }
             key = require('crypto').randomBytes(48);
-            return keytar.setPassword('KeeWeb', 'settings-key', key.toString('hex')).then(() => {
+            return keytar.setPassword('PwManager', 'settings-key', key.toString('hex')).then(() => {
                 return migrateOldConfigs(key).then(() => key);
             });
         });

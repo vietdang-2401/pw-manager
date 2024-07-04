@@ -1,5 +1,5 @@
 /**
- * KeeWeb plugin: settings-example
+ * PwManager plugin: settings-example
  * @author antelle
  * @license MIT
  */

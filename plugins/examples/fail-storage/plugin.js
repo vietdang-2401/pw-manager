@@ -1,5 +1,5 @@
 /**
- * KeeWeb plugin: fail-storage
+ * PwManager plugin: fail-storage
  * @author antelle
  * @license MIT
  */

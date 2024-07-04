@@ -8,7 +8,7 @@ if [[ "$SCHEMA" == 'http' ]]; then
     KEEWEB_GH=https://github.com/keeweb
 fi
 
-echo "Cloning KeeWeb ($KEEWEB_GH) into $PWD/keeweb..."
+echo "Cloning PwManager ($KEEWEB_GH) into $PWD/keeweb..."
 
 mkdir keeweb
 pushd keeweb >/dev/null
@@ -26,4 +26,4 @@ popd > /dev/null
 mkdir keeweb/keys
 echo kdbxweb/ > keeweb/.eslintignore
 
-echo "Done! KeeWeb is cloned into $PWD/keeweb"
+echo "Done! PwManager is cloned into $PWD/keeweb"

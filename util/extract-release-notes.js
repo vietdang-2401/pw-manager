@@ -31,7 +31,7 @@ const bodyReleaseNotes = match[1].trim().replace(/\s*\n/g, '\n');
 
 const body = `${bodyReleaseNotes}
 
-Want to keep releases happening? Donate to KeeWeb on [OpenCollective](https://opencollective.com/keeweb) or [GitHub](https://github.com/sponsors/keeweb). Thank you!`;
+Want to keep releases happening? Donate to PwManager on [OpenCollective](https://opencollective.com/keeweb) or [GitHub](https://github.com/sponsors/keeweb). Thank you!`;
 
 fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, body);

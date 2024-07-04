@@ -46,12 +46,12 @@ Section "MainSection" SEC01
   !insertmacro EnsureAppIsNotRunning
 
   DetailPrint "Removing desktop shortcut"
-  Delete "$DESKTOP\KeeWeb.lnk"
+  Delete "$DESKTOP\PwManager.lnk"
   DetailPrint "Removing menu shortcut"
-  Delete "$SMPROGRAMS\KeeWeb\KeeWeb.lnk"
+  Delete "$SMPROGRAMS\PwManager\PwManager.lnk"
 
   DetailPrint "Removing menu items"
-  RMDir "$SMPROGRAMS\KeeWeb"
+  RMDir "$SMPROGRAMS\PwManager"
 
   ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "InstallDir"
   ${If} $R0 == ""

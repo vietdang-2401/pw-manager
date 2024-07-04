@@ -1,5 +1,5 @@
-# KeeWeb Plugin Utility
+# PwManager Plugin Utility
 
-This is a plugin creation utility for [KeeWeb](https://keeweb.info).
+This is a plugin creation utility for [PwManager](https://keeweb.info).
 
 Plugin docs: https://github.com/keeweb/keeweb/wiki/Plugins

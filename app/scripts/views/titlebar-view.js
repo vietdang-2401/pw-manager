@@ -1,7 +1,7 @@
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
-import { KeeWebLogo } from 'const/inline-images';
+import { PwManagerLogo } from 'const/inline-images';
 import template from 'templates/titlebar.hbs';
 
 class TitlebarView extends View {
@@ -28,7 +28,7 @@ class TitlebarView extends View {
     render() {
         super.render({
             maximized: this.maximized,
-            iconSrc: KeeWebLogo
+            iconSrc: PwManagerLogo
         });
     }
 

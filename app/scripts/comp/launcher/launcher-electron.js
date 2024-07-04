@@ -58,7 +58,7 @@ const Launcher = {
         return this.joinPath(this.userDataPath, fileName || '');
     },
     getTempPath(fileName) {
-        let tempPath = this.joinPath(this.remoteApp().getPath('temp'), 'KeeWeb');
+        let tempPath = this.joinPath(this.remoteApp().getPath('temp'), 'PwManager');
         const fs = this.req('fs');
         if (!fs.existsSync(tempPath)) {
             fs.mkdirSync(tempPath);
@@ -182,8 +182,8 @@ const Launcher = {
     },
     minimizeApp() {
         this.remoteApp().minimizeApp({
-            restore: Locale.menuRestoreApp.replace('{}', 'KeeWeb'),
-            quit: Locale.menuQuitApp.replace('{}', 'KeeWeb')
+            restore: Locale.menuRestoreApp.replace('{}', 'PwManager'),
+            quit: Locale.menuQuitApp.replace('{}', 'PwManager')
         });
     },
     canDetectOsSleep() {

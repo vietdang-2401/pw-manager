@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Welcome to KeeWeb docker container!"
+echo "Welcome to PwManager docker container!"
 
 if [ -z ${DH_SIZE+x} ]
 then

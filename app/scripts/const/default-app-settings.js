@@ -70,8 +70,8 @@ const DefaultAppSettings = {
     webdavStatReload: false, // WebDAV: reload the file instead of relying on Last-Modified
 
     gdrive: true, // enable Google Drive integration
-    gdriveClientId: null, // custom Google Drive client id
-    gdriveClientSecret: null, // custom Google Drive client secret
+    gdriveClientId: '940576980855-t36gkauudub1oa61kjq0rtr8eduf0tb8.apps.googleusercontent.com', // custom Google Drive client id
+    gdriveClientSecret: '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', // custom Google Drive client secret
 
     onedrive: true, // enable OneDrive integration
     onedriveClientId: null, // custom OneDrive client id

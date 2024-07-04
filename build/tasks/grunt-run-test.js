@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-    grunt.registerMultiTask('run-test', 'Runs KeeWeb browser-tests', function () {
+    grunt.registerMultiTask('run-test', 'Runs PwManager browser-tests', function () {
         const done = this.async();
         const opt = this.options();
         const file = this.files[0].src[0];

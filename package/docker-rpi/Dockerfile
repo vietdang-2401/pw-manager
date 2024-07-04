@@ -1,4 +1,4 @@
-# KeeWeb official docker container
+# PwManager official docker container
 # https://keeweb.info
 # (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/

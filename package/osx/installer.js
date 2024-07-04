@@ -5,7 +5,7 @@ var app = Application.currentApplication();
 app.includeStandardAdditions = true;
 
 var args = getArgs();
-if (args.verbose) console.log('KeeWeb installer:', JSON.stringify(args, null, 2));
+if (args.verbose) console.log('PwManager installer:', JSON.stringify(args, null, 2));
 if (args.update) {
     var waitPid = args.waitPid | 0;
     if (waitPid) {
@@ -52,7 +52,7 @@ if (args.update) {
         args.verbose ? 'echo removing target...' : '',
         'rm -rf ' + target,
         args.verbose ? 'echo copying from tmp dir to target...' : '',
-        'cp -pR ' + tmpDir + '/KeeWeb.app ' + target,
+        'cp -pR ' + tmpDir + '/PwManager.app ' + target,
         args.verbose ? 'echo detaching disk image...' : '',
         'hdiutil detach ' + tmpDir,
         args.verbose ? 'echo cleaning tmp dir...' : '',
@@ -87,7 +87,9 @@ if (args.update) {
     if (args.verbose) console.log('done');
 } else if (args.install) {
     try {
-        app.doShellScript('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
+        app.doShellScript('chown -R 0 /Applications/PwManager.app', {
+            administratorPrivileges: true
+        });
     } catch (e) {
         $.exit(1);
     }

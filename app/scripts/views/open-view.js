@@ -769,20 +769,20 @@ class OpenView extends View {
 
     openStorage(e) {
         console.log('gg drive');
-        // if (this.busy) {
-        //     return;
-        // }
-        // const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
-        // if (!storage) {
-        //     return;
-        // }
-        // if (storage.needShowOpenConfig && storage.needShowOpenConfig()) {
-        //     this.showConfig(storage);
-        // } else if (storage.list) {
-        //     this.listStorage(storage);
-        // } else {
-        //     Alerts.notImplemented();
-        // }
+        if (this.busy) {
+            return;
+        }
+        const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
+        if (!storage) {
+            return;
+        }
+        if (storage.needShowOpenConfig && storage.needShowOpenConfig()) {
+            this.showConfig(storage);
+        } else if (storage.list) {
+            this.listStorage(storage);
+        } else {
+            Alerts.notImplemented();
+        }
     }
 
     listStorage(storage, config) {
