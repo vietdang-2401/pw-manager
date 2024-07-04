@@ -36,13 +36,13 @@ module.exports = function (grunt) {
             sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
         } catch (e) {
             grunt.warn(
-                "Cannot get commit sha from git. It's recommended to build KeeWeb from a git repo " +
+                "Cannot get commit sha from git. It's recommended to build PwManager from a git repo " +
                     'because commit sha is displayed in the UI, however if you would like to build from a folder, ' +
                     'you can override what will be displayed in the UI with --commit-sha=xxx.'
             );
         }
     }
-    grunt.log.writeln(`Building KeeWeb v${pkg.version} (${sha})`);
+    grunt.log.writeln(`Building PwManager v${pkg.version} (${sha})`);
 
     const webpackOptions = {
         date,
@@ -52,15 +52,15 @@ module.exports = function (grunt) {
     };
 
     const windowsAppVersionString = {
-        CompanyName: 'KeeWeb',
+        CompanyName: 'PwManager',
         FileDescription: pkg.description,
-        OriginalFilename: 'KeeWeb.exe',
-        ProductName: 'KeeWeb',
-        InternalName: 'KeeWeb'
+        OriginalFilename: 'PwManager.exe',
+        ProductName: 'PwManager',
+        InternalName: 'PwManager'
     };
 
     const appdmgOptions = (arch) => ({
-        title: 'KeeWeb',
+        title: 'PwManager',
         icon: 'graphics/icon.icns',
         background: 'graphics/dmg-background.png',
         'background-color': '#E0E6F9',
@@ -72,7 +72,7 @@ module.exports = function (grunt) {
                 x: 192,
                 y: 344,
                 type: 'file',
-                path: `tmp/desktop/KeeWeb-darwin-${arch}/KeeWeb.app`
+                path: `tmp/desktop/PwManager-darwin-${arch}/PwManager.app`
             }
         ]
     });
@@ -146,66 +146,61 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'desktop-darwin-installer-helper-x64': {
-                cwd: 'tmp/desktop/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/PwManager Installer.app',
                 src: '**',
                 dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                    'tmp/desktop/PwManager-darwin-x64/PwManager.app/Contents/Installer/PwManager Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
             },
             'desktop-darwin-installer-helper-arm64': {
-                cwd: 'tmp/desktop/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/PwManager Installer.app',
                 src: '**',
                 dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                    'tmp/desktop/PwManager-darwin-arm64/PwManager.app/Contents/Installer/PwManager Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
             },
             'desktop-win32-dist-x64': {
-                src: 'tmp/desktop/KeeWeb.win.x64.exe',
-                dest: `dist/desktop/KeeWeb-${pkg.version}.win.x64.exe`,
+                src: 'tmp/desktop/PwManager.win.x64.exe',
+                dest: `dist/desktop/PwManager-${pkg.version}.win.x64.exe`,
                 nonull: true
             },
             'desktop-win32-dist-ia32': {
-                src: 'tmp/desktop/KeeWeb.win.ia32.exe',
-                dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
+                src: 'tmp/desktop/PwManager.win.ia32.exe',
+                dest: `dist/desktop/PwManager-${pkg.version}.win.ia32.exe`,
                 nonull: true
             },
             'desktop-win32-dist-arm64': {
-                src: 'tmp/desktop/KeeWeb.win.arm64.exe',
-                dest: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.exe`,
+                src: 'tmp/desktop/PwManager.win.arm64.exe',
+                dest: `dist/desktop/PwManager-${pkg.version}.win.arm64.exe`,
                 nonull: true
             },
             'native-modules-darwin-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-x64.node',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                dest: 'tmp/desktop/PwManager-darwin-x64/PwManager.app/Contents/Resources/',
                 nonull: true
             },
             'native-modules-darwin-arm64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-arm64.node',
-                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
+                dest: 'tmp/desktop/PwManager-darwin-arm64/PwManager.app/Contents/Resources/',
                 nonull: true
             },
             'native-modules-win32-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-x64.node',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
-                nonull: true
-            },
-            'axios': {
-                src: 'node_modules/axios',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
+                dest: 'tmp/desktop/PwManager-win32-x64/resources/',
                 nonull: true
             },
             'native-modules-win32-ia32': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-ia32.node',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/',
+                dest: 'tmp/desktop/PwManager-win32-ia32/resources/',
                 nonull: true
             },
             'native-modules-win32-arm64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-arm64.node',
-                dest: 'tmp/desktop/KeeWeb-win32-arm64/resources/',
+                dest: 'tmp/desktop/PwManager-win32-arm64/resources/',
                 nonull: true
             },
             'native-modules-linux-x64': {
@@ -214,30 +209,30 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'electron-builder-dist-linux-rpm': {
-                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
-                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
+                src: `tmp/desktop/electron-builder/PwManager-${pkg.version}.x86_64.rpm`,
+                dest: `dist/desktop/PwManager-${pkg.version}.linux.x86_64.rpm`,
                 nonull: true
             },
             'electron-builder-dist-linux-snap': {
-                src: `tmp/desktop/electron-builder/KeeWeb_${pkg.version}_amd64.snap`,
-                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.snap`,
+                src: `tmp/desktop/electron-builder/PwManager_${pkg.version}_amd64.snap`,
+                dest: `dist/desktop/PwManager-${pkg.version}.linux.snap`,
                 nonull: true
             },
             'electron-builder-dist-linux-appimage': {
                 src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
-                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
+                dest: `dist/desktop/PwManager-${pkg.version}.linux.AppImage`,
                 nonull: true
             },
             'darwin-installer-icon': {
                 src: 'graphics/icon.icns',
-                dest: 'tmp/desktop/KeeWeb Installer.app/Contents/Resources/applet.icns',
+                dest: 'tmp/desktop/PwManager Installer.app/Contents/Resources/applet.icns',
                 nonull: true
             },
             'native-messaging-host-darwin-x64': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
                 dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                    'tmp/desktop/PwManager-darwin-x64/PwManager.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
@@ -245,7 +240,7 @@ module.exports = function (grunt) {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
                 dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                    'tmp/desktop/PwManager-darwin-arm64/PwManager.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
@@ -259,19 +254,19 @@ module.exports = function (grunt) {
             'native-messaging-host-win32-x64': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/PwManager-win32-x64/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-ia32': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/PwManager-win32-ia32/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-arm64': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/PwManager-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
         },
@@ -377,7 +372,7 @@ module.exports = function (grunt) {
         },
         electron: {
             options: {
-                name: 'KeeWeb',
+                name: 'PwManager',
                 dir: 'tmp/desktop/app',
                 out: 'tmp/desktop',
                 electronVersion,
@@ -478,12 +473,12 @@ module.exports = function (grunt) {
             }
         },
         'electron-patch': {
-            'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
-            'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
-            'win32-arm64': 'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe',
-            'darwin-x64': 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app',
-            'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
-            'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
+            'win32-x64': 'tmp/desktop/PwManager-win32-x64/PwManager.exe',
+            'win32-ia32': 'tmp/desktop/PwManager-win32-ia32/PwManager.exe',
+            'win32-arm64': 'tmp/desktop/PwManager-win32-arm64/PwManager.exe',
+            'darwin-x64': 'tmp/desktop/PwManager-darwin-x64/PwManager.app',
+            'darwin-arm64': 'tmp/desktop/PwManager-darwin-arm64/PwManager.app',
+            'linux': 'tmp/desktop/PwManager-linux-x64/keeweb'
         },
         osacompile: {
             options: {
@@ -491,7 +486,7 @@ module.exports = function (grunt) {
             },
             installer: {
                 files: {
-                    'tmp/desktop/KeeWeb Installer.app': 'package/osx/installer.js'
+                    'tmp/desktop/PwManager Installer.app': 'package/osx/installer.js'
                 }
             }
         },
@@ -500,19 +495,19 @@ module.exports = function (grunt) {
                 level: 6
             },
             'win32-x64': {
-                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.x64.zip` },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-x64', src: '**', expand: true }]
+                options: { archive: `dist/desktop/PwManager-${pkg.version}.win.x64.zip` },
+                files: [{ cwd: 'tmp/desktop/PwManager-win32-x64', src: '**', expand: true }]
             },
             'win32-ia32': {
-                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.zip` },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
+                options: { archive: `dist/desktop/PwManager-${pkg.version}.win.ia32.zip` },
+                files: [{ cwd: 'tmp/desktop/PwManager-win32-ia32', src: '**', expand: true }]
             },
             'win32-arm64': {
-                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.zip` },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-arm64', src: '**', expand: true }]
+                options: { archive: `dist/desktop/PwManager-${pkg.version}.win.arm64.zip` },
+                files: [{ cwd: 'tmp/desktop/PwManager-win32-arm64', src: '**', expand: true }]
             },
             'linux-x64': {
-                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
+                options: { archive: `dist/desktop/PwManager-${pkg.version}.linux.x64.zip` },
                 files: [
                     { cwd: 'tmp/desktop/keeweb-linux-x64', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
@@ -522,11 +517,11 @@ module.exports = function (grunt) {
         appdmg: {
             x64: {
                 options: appdmgOptions('x64'),
-                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.x64.dmg`
+                dest: `dist/desktop/PwManager-${pkg.version}.mac.x64.dmg`
             },
             arm64: {
                 options: appdmgOptions('arm64'),
-                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
+                dest: `dist/desktop/PwManager-${pkg.version}.mac.arm64.dmg`
             }
         },
         nsis: {
@@ -541,42 +536,42 @@ module.exports = function (grunt) {
                 options: {
                     installScript: 'package/nsis/main.nsi',
                     arch: 'x64',
-                    output: 'tmp/desktop/KeeWeb.win.x64.exe'
+                    output: 'tmp/desktop/PwManager.win.x64.exe'
                 }
             },
             'win32-un-x64': {
                 options: {
                     installScript: 'package/nsis/main-un.nsi',
                     arch: 'x64',
-                    output: 'tmp/desktop/KeeWeb-win32-x64/uninst.exe'
+                    output: 'tmp/desktop/PwManager-win32-x64/uninst.exe'
                 }
             },
             'win32-ia32': {
                 options: {
                     installScript: 'package/nsis/main.nsi',
                     arch: 'ia32',
-                    output: 'tmp/desktop/KeeWeb.win.ia32.exe'
+                    output: 'tmp/desktop/PwManager.win.ia32.exe'
                 }
             },
             'win32-un-ia32': {
                 options: {
                     installScript: 'package/nsis/main-un.nsi',
                     arch: 'ia32',
-                    output: 'tmp/desktop/KeeWeb-win32-ia32/uninst.exe'
+                    output: 'tmp/desktop/PwManager-win32-ia32/uninst.exe'
                 }
             },
             'win32-arm64': {
                 options: {
                     installScript: 'package/nsis/main.nsi',
                     arch: 'arm64',
-                    output: 'tmp/desktop/KeeWeb.win.arm64.exe'
+                    output: 'tmp/desktop/PwManager.win.arm64.exe'
                 }
             },
             'win32-un-arm64': {
                 options: {
                     installScript: 'package/nsis/main-un.nsi',
                     arch: 'arm64',
-                    output: 'tmp/desktop/KeeWeb-win32-arm64/uninst.exe'
+                    output: 'tmp/desktop/PwManager-win32-arm64/uninst.exe'
                 }
             }
         },
@@ -604,9 +599,9 @@ module.exports = function (grunt) {
                 options: {
                     info: {
                         arch: 'amd64',
-                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
+                        pkgName: `PwManager-${pkg.version}.linux.x64.deb`,
                         targetDir: 'dist/desktop',
-                        appName: 'KeeWeb',
+                        appName: 'PwManager',
                         depends: linuxDependencies.join(', '),
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
@@ -644,16 +639,16 @@ module.exports = function (grunt) {
                 options: {
                     'provisioning-profile': './keys/keeweb.provisionprofile'
                 },
-                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+                src: 'tmp/desktop/PwManager-darwin-x64/PwManager.app'
             },
             'desktop-arm64': {
                 options: {
                     'provisioning-profile': './keys/keeweb.provisionprofile'
                 },
-                src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
+                src: 'tmp/desktop/PwManager-darwin-arm64/PwManager.app'
             },
             'installer': {
-                src: 'tmp/desktop/KeeWeb Installer.app'
+                src: 'tmp/desktop/PwManager Installer.app'
             }
         },
         notarize: {
@@ -668,10 +663,10 @@ module.exports = function (grunt) {
                 }
             },
             'desktop-x64': {
-                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+                src: 'tmp/desktop/PwManager-darwin-x64/PwManager.app'
             },
             'desktop-arm64': {
-                src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
+                src: 'tmp/desktop/PwManager-darwin-arm64/PwManager.app'
             }
         },
         'sign-exe': {
@@ -687,13 +682,13 @@ module.exports = function (grunt) {
             'win32-build-x64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe': 'KeeWeb',
-                        'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe':
-                            'KeeWeb Native Messaging Host',
-                        'tmp/desktop/KeeWeb-win32-x64/ffmpeg.dll': '',
-                        'tmp/desktop/KeeWeb-win32-x64/libEGL.dll':
+                        'tmp/desktop/PwManager-win32-x64/PwManager.exe': 'PwManager',
+                        'tmp/desktop/PwManager-win32-x64/keeweb-native-messaging-host.exe':
+                            'PwManager Native Messaging Host',
+                        'tmp/desktop/PwManager-win32-x64/ffmpeg.dll': '',
+                        'tmp/desktop/PwManager-win32-x64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-x64/libGLESv2.dll':
+                        'tmp/desktop/PwManager-win32-x64/libGLESv2.dll':
                             'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
@@ -701,13 +696,13 @@ module.exports = function (grunt) {
             'win32-build-ia32': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe': 'KeeWeb',
-                        'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe':
-                            'KeeWeb Native Messaging Host',
-                        'tmp/desktop/KeeWeb-win32-ia32/ffmpeg.dll': '',
-                        'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
+                        'tmp/desktop/PwManager-win32-ia32/PwManager.exe': 'PwManager',
+                        'tmp/desktop/PwManager-win32-ia32/keeweb-native-messaging-host.exe':
+                            'PwManager Native Messaging Host',
+                        'tmp/desktop/PwManager-win32-ia32/ffmpeg.dll': '',
+                        'tmp/desktop/PwManager-win32-ia32/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll':
+                        'tmp/desktop/PwManager-win32-ia32/libGLESv2.dll':
                             'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
@@ -715,13 +710,13 @@ module.exports = function (grunt) {
             'win32-build-arm64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe': 'KeeWeb',
-                        'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe':
-                            'KeeWeb Native Messaging Host',
-                        'tmp/desktop/KeeWeb-win32-arm64/ffmpeg.dll': '',
-                        'tmp/desktop/KeeWeb-win32-arm64/libEGL.dll':
+                        'tmp/desktop/PwManager-win32-arm64/PwManager.exe': 'PwManager',
+                        'tmp/desktop/PwManager-win32-arm64/keeweb-native-messaging-host.exe':
+                            'PwManager Native Messaging Host',
+                        'tmp/desktop/PwManager-win32-arm64/ffmpeg.dll': '',
+                        'tmp/desktop/PwManager-win32-arm64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-arm64/libGLESv2.dll':
+                        'tmp/desktop/PwManager-win32-arm64/libGLESv2.dll':
                             'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
@@ -729,42 +724,42 @@ module.exports = function (grunt) {
             'win32-uninst-x64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-x64/uninst.exe': 'KeeWeb Uninstaller'
+                        'tmp/desktop/PwManager-win32-x64/uninst.exe': 'PwManager Uninstaller'
                     }
                 }
             },
             'win32-uninst-ia32': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-ia32/uninst.exe': 'KeeWeb Uninstaller'
+                        'tmp/desktop/PwManager-win32-ia32/uninst.exe': 'PwManager Uninstaller'
                     }
                 }
             },
             'win32-uninst-arm64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb-win32-arm64/uninst.exe': 'KeeWeb Uninstaller'
+                        'tmp/desktop/PwManager-win32-arm64/uninst.exe': 'PwManager Uninstaller'
                     }
                 }
             },
             'win32-installer-x64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb.win.x64.exe': 'KeeWeb Setup'
+                        'tmp/desktop/PwManager.win.x64.exe': 'PwManager Setup'
                     }
                 }
             },
             'win32-installer-ia32': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb.win.ia32.exe': 'KeeWeb Setup'
+                        'tmp/desktop/PwManager.win.ia32.exe': 'PwManager Setup'
                     }
                 }
             },
             'win32-installer-arm64': {
                 options: {
                     files: {
-                        'tmp/desktop/KeeWeb.win.arm64.exe': 'KeeWeb Setup'
+                        'tmp/desktop/PwManager.win.arm64.exe': 'PwManager Setup'
                     }
                 }
             }
@@ -775,7 +770,7 @@ module.exports = function (grunt) {
                     sign: 'dist/desktop/Verify.sign.sha256'
                 },
                 files: {
-                    'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*']
+                    'dist/desktop/Verify.sha256': ['dist/desktop/PwManager-*']
                 }
             }
         },

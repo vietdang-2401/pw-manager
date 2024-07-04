@@ -14,5 +14,9 @@
     "url": "http://antelle.net"
   },
   "license": "MIT",
-  "readme": "../README.md"
+  "readme": "../README.md",
+  "dependencies": {
+    "@jitsi/robotjs": "^0.6.13",
+    "axios": "^1.7.2"
+  }
 }
