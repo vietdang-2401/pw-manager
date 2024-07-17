@@ -1,0 +1,92 @@
+<div class="settings__content">
+    <h1><i class="fa fa-lock settings__head-icon"></i> {{name}}</h1>
+    {{#if storage}}
+        {{#ifeq storage 'file'}}<p>{{res 'setFilePath'}}: {{path}}</p>{{/ifeq}}
+        {{#ifneq storage 'file'}}<p>{{#res 'setFileStorage'}}{{res storage}}{{/res}}</p>{{/ifneq}}
+    {{else}}
+        <p>{{res 'setFileIntl'}}.</p>
+    {{/if}}
+
+    <div class="settings__file-buttons">
+        <button class="settings__file-button-save-default" {{#if syncing}}disabled{{/if}}>
+            {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
+            {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
+        </button>
+        {{#if canSaveTo}}
+            <button class="settings__file-button-save-choose btn-silent"
+                {{#if syncing}}disabled{{/if}}>{{res 'setFileSaveTo'}}</button>
+        {{/if}}
+        <button class="settings__file-button-close btn-silent">{{res 'setFileClose'}}</button>
+    </div>
+
+    <div class="settings__file-save-choose hide">
+        <h2>{{res 'setFileSaveTo'}}</h2>
+        {{#ifneq storage 'file'}}
+        <div class="settings__file-save-to settings__file-save-to-file">
+            <i class="fa fa-desktop"></i>{{Res 'openLocalFile'}}
+        </div>
+        {{/ifneq}}
+        {{#each storageProviders as |prv|}}
+            {{#unless prv.own}}
+            <div class="settings__file-save-to settings__file-save-to-storage" data-storage="{{prv.name}}">
+                {{#if prv.icon}}<i class="fa fa-{{prv.icon}}"></i>{{/if}}
+                <span>{{res prv.name}}</span>
+            </div>
+            {{/unless}}
+        {{/each}}
+    </div>
+
+    {{#if storage}}
+    <h2>{{res 'setFileSync'}}</h2>
+    <div>{{res 'setFileLastSync'}}: {{#if syncDate}}{{syncDate}}{{else}}{{res 'setFileLastSyncUnknown'}}{{/if}} {{#if syncing}}({{res 'setFileSyncInProgress'}}...){{/if}}</div>
+    {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
+    {{/if}}
+
+    <h2>{{res 'settings'}}</h2>
+    <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
+        <span class="settings__file-master-pass-warning">
+            <i class="fa fa-exclamation-triangle"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
+        </span>
+    </label>
+    <div class="hide">
+        {{!-- we need these inputs to screw browsers passwords autocompletion --}}
+        <input type="text" name="username">
+        <input type="password" name="password">
+    </div>
+    <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" autocomplete="new-password" />
+    <div id="settings__file-confirm-master-pass-group">
+        <label for="settings__file-confirm-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFileConfirmPass'}}:
+            <span class="settings__file-confirm-master-pass-warning">
+                <i class="fa fa-exclamation-triangle"></i> {{res 'setFilePassNotMatch'}}
+            </span>
+        </label>
+        <input type="password" class="settings__input input-base" id="settings__file-confirm-master-pass" autocomplete="confirm-password" />
+    </div>
+    <p>
+        <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
+        <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
+        <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
+        <input type="file" id="settings__file-file-select" class="hide-by-pos" />
+    </p>
+
+    <label for="settings__file-name">{{Res 'name'}}:</label>
+    <input type="text" class="settings__input input-base" id="settings__file-name" value="{{name}}" required />
+
+    <h2>{{Res 'history'}}</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
+        <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
+    </div>
+    <label for="settings__file-hist-type">{{res 'setFileHistMode'}}</label>
+    <select class="settings__select input-base" id="settings__file-hist-type">
+        <option value="1" {{#cmp historyMaxItems 0 '>'}}selected{{/cmp}}>{{res 'setFileHistLimited'}}</option>
+        <option value="0" {{#ifeq historyMaxItems 0}}selected{{/ifeq}}>{{res 'setFileHistDisabled'}}</option>
+        <option value="-1" {{#ifeq historyMaxItems -1}}selected{{/ifeq}}>{{res 'setFileHistUnlimited'}}</option>
+    </select>
+    {{#cmp historyMaxItems 0 '>'}}
+        <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
+        <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+    {{/cmp}}
+    <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
+</div>
