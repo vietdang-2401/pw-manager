@@ -52,7 +52,7 @@ setUserDataPaths();
 let openFile = process.argv.filter((arg) => /\.kdbx$/i.test(arg))[0];
 
 const htmlPath =
-    (isDev && process.env.KEEWEB_HTML_PATH) ||
+    (isDev && process.env.HTML_PATH) ||
     url.format({ protocol: 'file', slashes: true, pathname: path.join(__dirname, 'index.html') });
 
 const showDevToolsOnStart =
@@ -710,9 +710,9 @@ function setUserDataPaths() {
             break;
     }
 
-    if (isDev && process.env.KEEWEB_IS_PORTABLE) {
+    if (isDev && process.env.IS_PORTABLE) {
         try {
-            isPortable = !!JSON.parse(process.env.KEEWEB_IS_PORTABLE);
+            isPortable = !!JSON.parse(process.env.IS_PORTABLE);
         } catch {}
     }
 

@@ -1,5 +1,0 @@
-name: 'Linux Build'
-description: 'Build PwManager on Linux in Docker'
-runs:
-    using: 'docker'
-    image: 'Dockerfile'

@@ -41,11 +41,11 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     const data = readXoredValue(value);
 
     let res;
-    if (isDev && process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION) {
+    if (isDev && process.env.EMULATE_HARDWARE_ENCRYPTION) {
         const crypto = require('crypto');
         if (!testCipherParams) {
             let key, iv;
-            if (process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION === 'persistent') {
+            if (process.env.EMULATE_HARDWARE_ENCRYPTION === 'persistent') {
                 key = Buffer.alloc(32, 0);
                 iv = Buffer.alloc(16, 0);
             } else {
