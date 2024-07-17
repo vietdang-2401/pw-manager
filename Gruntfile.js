@@ -205,7 +205,7 @@ module.exports = function (grunt) {
             },
             'native-modules-linux-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-linux-x64.node',
-                dest: 'tmp/desktop/keeweb-linux-x64/resources/',
+                dest: 'tmp/desktop/PwManager-linux-x64/resources/',
                 nonull: true
             },
             'electron-builder-dist-linux-rpm': {
@@ -219,7 +219,7 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'electron-builder-dist-linux-appimage': {
-                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
+                src: `tmp/desktop/electron-builder/PwManager-${pkg.version}.AppImage`,
                 dest: `dist/desktop/PwManager-${pkg.version}.linux.AppImage`,
                 nonull: true
             },
@@ -247,7 +247,7 @@ module.exports = function (grunt) {
             'native-messaging-host-linux-x64': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
-                dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/PwManager-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
@@ -384,7 +384,7 @@ module.exports = function (grunt) {
             },
             linux: {
                 options: {
-                    name: 'keeweb',
+                    name: 'PwManager',
                     platform: 'linux',
                     arch: 'x64',
                     icon: 'graphics/icon.ico'
@@ -443,10 +443,10 @@ module.exports = function (grunt) {
                 options: {
                     publish: 'never',
                     targets: 'linux',
-                    prepackaged: 'tmp/desktop/keeweb-linux-x64',
+                    prepackaged: 'tmp/desktop/PwManager-linux-x64',
                     config: {
                         appId: 'net.antelle.keeweb',
-                        productName: 'keeweb',
+                        productName: 'PwManager',
                         copyright: `Copyright © ${year} Antelle`,
                         directories: {
                             output: 'tmp/desktop/electron-builder',
@@ -463,7 +463,7 @@ module.exports = function (grunt) {
                             category: 'Utility'
                         },
                         rpm: {
-                            // depends: linuxDependencies
+                            depends: linuxDependencies
                         },
                         snap: {
                             stagePackages: linuxDependencies
@@ -478,7 +478,7 @@ module.exports = function (grunt) {
             'win32-arm64': 'tmp/desktop/PwManager-win32-arm64/PwManager.exe',
             'darwin-x64': 'tmp/desktop/PwManager-darwin-x64/PwManager.app',
             'darwin-arm64': 'tmp/desktop/PwManager-darwin-arm64/PwManager.app',
-            'linux': 'tmp/desktop/PwManager-linux-x64/keeweb'
+            'linux': 'tmp/desktop/PwManager-linux-x64/PwManager'
         },
         osacompile: {
             options: {
@@ -509,7 +509,7 @@ module.exports = function (grunt) {
             'linux-x64': {
                 options: { archive: `dist/desktop/PwManager-${pkg.version}.linux.x64.zip` },
                 files: [
-                    { cwd: 'tmp/desktop/keeweb-linux-x64', src: '**', expand: true },
+                    { cwd: 'tmp/desktop/PwManager-linux-x64', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
                 ]
             }
@@ -580,14 +580,14 @@ module.exports = function (grunt) {
                 options: {
                     mode: '4755'
                 },
-                src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
+                src: ['tmp/desktop/PwManager-linux-x64/chrome-sandbox']
             }
         },
         deb: {
             options: {
                 tmpPath: 'tmp/desktop/',
                 package: {
-                    name: 'keeweb-desktop',
+                    name: 'PwManager-desktop',
                     version: pkg.version,
                     description: pkg.description,
                     author: pkg.author,
@@ -611,9 +611,9 @@ module.exports = function (grunt) {
                 files: [
                     { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
                     {
-                        cwd: 'tmp/desktop/keeweb-linux-x64/',
+                        cwd: 'tmp/desktop/PwManager-linux-x64/',
                         src: '**',
-                        dest: '/usr/share/keeweb-desktop',
+                        dest: '/usr/share/PwManager-desktop',
                         expand: true,
                         nonull: true
                     },
